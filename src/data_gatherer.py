@@ -1,0 +1,263 @@
+"""
+Author: Martin PIANA
+Date: December 2020
+
+Notes: when using vnstat and powerstat the computer, and the software have to have been running for 300 seconds or so
+Maybe worth putting a little note when downloading software: "Careful, must wait 300 seconds for it to be operational"
+"""
+
+
+"""
+Todo:
+ - Gather datasetfor computers manufacturing and electricity co2 cost
+ - code same thing for mac and windows. Be careful to have same output from the code whatever the os
+ - get an interface (not too ugly). That also means name and logo. Who could do the interface?????
+ - see if I can have it running in background on ubuntu so that it updats constantly
+ - Contact mad and see if they know someone who'd know how to make a interface graphique
+
+"""
+
+import os
+import subprocess
+import pandas as pd
+from io import StringIO
+
+
+units = {"MiB" : 10e5, "GiB" : 10e8, "KiB": 10e2}# not sure about KiB (maybe a lowercase)
+
+data_center = 7.2*10e-11 # kwh per byte due to servers
+network = {"wired": 4.29*10e-11, "wifi": 1.52*10e-11, "mobile": 8.84*10e-11} #kwh per byte due to network
+# source : https://theshiftproject.org/wp-content/uploads/2019/10/Lean-ICT-Materials-Liens-%C3%A0-t%C3%A9l%C3%A9charger-r%C3%A9par%C3%A9-le-29-10-2019.pdf
+# Seems to correspond more or less with IEA and GreenIT values
+energetic_mix = {"France": 80,"USA":350} #g of Co2 per Kwh
+
+
+def fetch_rt_data_usage(date, network):
+    """
+    ARGS: date must be entered as a float of format "2012-12-21", 
+    network is the network interface we are focusing on. In my case its wlo1 but it depends whether its (wifi/network) or ethernet
+    In order to get the total consumption I'll need to run it on all different types of networks 
+
+    OUTPUTS: a float (quantity) of bytes consumed up to now today
+    """
+    # Executes command in terminal
+    #careful: 
+
+    command = ['vnstat', '-i', network, '-d']
+    # run vnstat -i wlo1 -d to see what the value of p is
+    p = subprocess.Popen(command, stdout=subprocess.PIPE)
+    bytes_data = p.stdout.read()
+    retcode = p.wait()
+
+
+    # retrieves data and transforms it
+    s=str(bytes_data,'utf-8')
+    #print(s)
+
+    a = s.split("\n")
+    #print(a)
+    interesting = None
+    for i in range (len(a)):
+        if date in a[i]:
+            interesting = a[i]
+    a = interesting.split('|')
+
+    #Note: this might be something leading to mistakes(I visually saw that nbr 2 was where my interesting info was)
+    s = a[2]
+    print(s)
+    unit = ''.join(x for x in s if x.isalpha())
+    quantity = ''.join(x for x in s if not x.isalpha())
+    quantity = quantity.replace(',', '.')
+    print("you've consumed " + quantity + " " + unit)
+    return float(quantity) * units[unit]
+
+"""
+a = fetch_rt_data_usage("2020-12-04", "wlo1")
+print(a)
+"""
+
+def fetch_hourly_data_usage(network):
+    """
+    ARGS: the network we're using
+    Output: a dictionary of the form {"22": 157, ....} the key is the hour and the value is the quantity of data consumed
+    """
+    command = ['vnstat', '-i', network, '-h']
+    p = subprocess.Popen(command, stdout=subprocess.PIPE)
+    bytes_data = p.stdout.read()
+    retcode = p.wait()
+
+    # retrieves data and transforms it
+    s=str(bytes_data,'utf-8', errors='ignore')
+    a=s.split("\n")
+    hourly = {}
+    interesting =""
+    for i in range (len(a)):
+        if len(a[i])>0:
+            if a[i][0]=="0" or a[i][0]=="1" or a[i][0]=="2":
+                a[i] = a[i].replace(",", ".")
+                interesting+=a[i]+"][ "
+
+
+    
+    interesting = interesting.replace("][ ", " \n")
+    interesting = interesting.split("\n")
+
+    for i in range (len(interesting)):
+
+        if len(interesting[i])>0:
+            print(interesting[i][2:18], interesting[i][18:])
+            hourly[interesting[i][:2]] = float(interesting[i][2:18]) + float(interesting[i][18:])
+  
+
+    return hourly
+
+
+def fetch_daily_data_usage(network):
+    """
+    oututs a dictionary with dates as keys and the consumption per day in bytes as values
+    """
+    command = ['vnstat', '-i', network, '-d']
+    p = subprocess.Popen(command, stdout=subprocess.PIPE)
+    bytes_data = p.stdout.read()
+    retcode = p.wait()
+
+    # retrieves data and transforms it
+    s=str(bytes_data,'utf-8', errors='ignore')
+    a=s.split("\n")
+    a = a[5:-3]
+
+    data = {}
+    for i in range (len(a)):
+        a[i] = a[i][5:]
+        a[i] = a[i].replace("|", "")
+        a[i] = a[i].split("  ")
+
+        unit = ''.join(x for x in a[i][3] if x.isalpha())
+        quantity = ''.join(x for x in a[i][3] if not x.isalpha())
+        quantity = quantity.replace(',', '.')
+
+        date = a[i][0]
+        data[date] = float(quantity) * units[unit]
+
+
+    #print(data)
+    return data
+
+
+def fetch_battery_cons():
+    """
+    Returns the KWh consumption (refreshed every 120s) due to terminal consumption
+    """
+    #refreshed every 120s
+    command = ['upower', '-i', '/org/freedesktop/UPower/devices/battery_BAT0']
+    p = subprocess.Popen(command, stdout=subprocess.PIPE)
+    bytes_data = p.stdout.read()
+    retcode = p.wait()
+
+    # retrieves data and transforms it
+    s=str(bytes_data,'utf-8')
+    a=s.split("\n")
+    interesting = ""
+    for i in range (len(a)):
+        if "energy-rate" in a[i]:
+            interesting = a[i]
+    interesting = interesting.replace("energy-rate:", "")
+    interesting = interesting.replace("W", "")
+    interesting = interesting.replace(",", ".")
+    power = float(interesting)
+
+
+
+    return power * (1/30) * 10e-3
+
+
+
+def get_pc_name():
+    """
+    returns product name and the manufacturer
+    """
+    command = ['sudo', 'dmidecode', '|', 'grep', '"Product Name"']
+    p = subprocess.Popen(command, stdout=subprocess.PIPE)
+    bytes_data = p.stdout.read()
+    retcode = p.wait()
+
+    # retrieves data and transforms it
+    s=str(bytes_data,'utf-8')
+    start_product = s.find("Product Name:")
+    end_product = start_product + s[start_product:].find("by")
+    product = s[start_product:end_product]
+    product = product.replace("Product Name: ", "")
+
+    start_manufacturer = s.find("Manufacturer: ")
+    end_manufacturer = start_manufacturer + s[start_manufacturer:].find("\n")
+    manufacturer = s[start_manufacturer:end_manufacturer]
+    manufacturer = manufacturer.replace("Manufacturer: ", "")
+    print(product, manufacturer)
+
+    return product, manufacturer
+
+
+
+
+
+#daily = fetch_daily_data_usage("wlo1")
+#print(daily)
+
+
+a = fetch_rt_data_usage("2021-02-08", "wlo1")
+
+
+print("IN THE US with wifi")
+print("Youve consumed this CO2 g due to servers: ", a * (data_center) * energetic_mix["USA"]) #Note: I don't know whre the data center actually is ==> the energetic mix might
+                                                    # not be the same
+print("Youve consumed this CO2 g due to networks: ",a *  network["wifi"] * energetic_mix["USA"])
+print("\nbattery consumption in the US")
+#print(fetch_battery_cons(), " KWh")
+print(fetch_battery_cons() * energetic_mix["USA"] * 240, "g Co2 today due to battery usage")
+
+
+print("\n******* \n \nIN FRANCE WITH WIFI")
+print("Youve consumed this CO2 g due to servers: ", a * (data_center) * energetic_mix["France"]) #Note: I don't know whre the data center actually is ==> the energetic mix might
+                                                    # not be the same
+print("Youve consumed this CO2 g due to networks: ",a *  network["wifi"] * energetic_mix["France"])
+print("\nbattery consumption in France")
+print(fetch_battery_cons(), " KWh")
+print(fetch_battery_cons() * energetic_mix["France"] *240, "g Co2 today due to battery usage")
+
+# this would probably do a good job of it
+"""
+import schedule
+import time
+
+def job():
+    print("I'm working...")
+
+schedule.every(10).minutes.do(job)
+schedule.every().hour.do(job)
+schedule.every().day.at("10:30").do(job)
+
+while 1:
+    schedule.run_pending()
+    time.sleep(1)
+"""
+
+
+
+"""
+from multiprocessing import Process
+import time
+
+def doWork():
+    while True:
+        print "working...."
+        time.sleep(10)
+
+
+
+if __name__ == "__main__":
+    p = Process(target=doWork)
+    p.start()
+
+    while True:
+        time.sleep(60)
+"""
