@@ -132,6 +132,7 @@ def fetch_daily_data_usage(network):
         a[i] = a[i].replace("|", "")
         a[i] = a[i].split("  ")
 
+        a[i] = [y for y in a[i] if y!='']
         unit = ''.join(x for x in a[i][3] if x.isalpha())
         quantity = ''.join(x for x in a[i][3] if not x.isalpha())
         quantity = quantity.replace(',', '.')
