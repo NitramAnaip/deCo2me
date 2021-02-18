@@ -9,6 +9,9 @@ $(function () {
 
   'use strict'
 
+  //Constant
+  var measurePeriod = 10 * 60; //Duration between two measurements, in seconds
+
   /* jQueryKnob */
   $('.knob').knob()
 
@@ -65,8 +68,23 @@ $(function () {
   var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d');
   //$('#revenue-chart').get(0).getContext('2d');
 
+  let numOfMeasurements = Math.ceil(86400 / measurePeriod);
+  let labels = [];
+  let data = [];
+
+  let measurementDate = new Date(2000, 1, 1, 0, 0, 0, 0);
+
+  for(let i = 0; i < numOfMeasurements; i++)
+  {
+    labels.push(measurementDate.toTimeString().substr(0, 5));
+    measurementDate.setSeconds(measurementDate.getSeconds() + measurePeriod);
+  }
+
+  for(let i = 0; i < labels.length; i++)
+    data.push(Math.random() * 10000);
+
   var salesGraphChartData = {
-    labels  : ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00', '00:00'],
+    labels  : labels,
     datasets: [
       {
         label               : 'Digital Goods',
@@ -79,7 +97,7 @@ $(function () {
         pointHoverRadius    : 7,
         pointColor          : '#efefef',
         pointBackgroundColor: '#efefef',
-        data                : [2666, 2778, 4912, 3767, 6810, 5670, 4820, 15073, 10687, 8432, 2666, 2778, 4912, 3767, 6810, 5670, 4820, 15073, 10687, 8432, 2666, 2778, 4912, 3767, 6810, 5670, 4820, 15073, 10687, 8432]
+        data                : data
       }
     ]
   }
