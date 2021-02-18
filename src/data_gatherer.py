@@ -199,10 +199,17 @@ def get_pc_name():
 
 
 
+def get manufacturing_cost(manufacturing_data):
+    """
+    If the pc name isn't in the database we'll use the ADEME's value by default
+    It is a very coarse approximation (that is even very low when compared to other values given by manufacturers for whatever reason)
+    https://www.bilans-ges.ademe.fr/documentation/UPLOAD_DOC_FR/index.htm?ordinateurs_et_equuipements_pe.htm
+    """
+    pc_name = get_pc_name()
+    cost = 169 # default value given by ADEME
+    return cost
 
 
-#daily = fetch_daily_data_usage("wlo1")
-#print(daily)
 
 
 a = fetch_rt_data_usage("2021-02-08", "wlo1")
