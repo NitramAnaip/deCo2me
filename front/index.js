@@ -10,7 +10,7 @@ $(function () {
   'use strict'
 
   //Constant
-  var measurePeriod = 10 * 60; //Duration between two measurements, in seconds
+  var measurePeriod = 30 * 60; //Duration between two measurements, in seconds
 
   /* jQueryKnob */
   $('.knob').knob()
@@ -27,10 +27,14 @@ $(function () {
   {
     if (e.oldDate !== e.date)
     {
+      let a = Math.random() * 10000;
+      let w = Math.random() / 2;
+      let phi = Math.random() * 2 * Math.PI;
+    
       for(var i = 0; i < salesGraphChart.config.data.datasets[0].data.length; i++)
-        salesGraphChartData.datasets[0].data[i] = Math.random() * 10000
+        salesGraphChartData.datasets[0].data[i] = Math.floor(a * (1 + Math.cos(w * i + phi)));
       for(i = 0; i < pieData.datasets[0].data.length; i++)
-        pieData.datasets[0].data[i] = Math.random() * 10000
+        pieData.datasets[0].data[i] = Math.floor(Math.random() * 40)
 
       salesGraphChart.update()
       pieChart.update()
@@ -68,7 +72,7 @@ $(function () {
   var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d');
   //$('#revenue-chart').get(0).getContext('2d');
 
-  let numOfMeasurements = Math.ceil(86400 / measurePeriod);
+  let numOfMeasurements = Math.ceil(86400 / measurePeriod) + 1;
   let labels = [];
   let data = [];
 
@@ -80,8 +84,12 @@ $(function () {
     measurementDate.setSeconds(measurementDate.getSeconds() + measurePeriod);
   }
 
+  let a = Math.random() * 10000;
+  let w = Math.random() / 2;
+  let phi = Math.random() * 2 * Math.PI;
+
   for(let i = 0; i < labels.length; i++)
-    data.push(Math.random() * 10000);
+    data.push(Math.floor(a * (1 + Math.cos(w * i + phi))));
 
   var salesGraphChartData = {
     labels  : labels,
