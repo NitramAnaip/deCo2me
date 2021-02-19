@@ -38,7 +38,7 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
     </ul>
-    <span class="navbar-brand font-weight-light">Main menu</span>
+    <span id="current-menu" class="navbar-brand font-weight-light"></span>
   </nav>
   <!-- /.navbar -->
 
@@ -59,15 +59,21 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item">
-            <a href="https://adminlte.io/docs/3.0" class="nav-link active">
+            <a id="overview" href="#" class="nav-link">
               <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>Main menu</p>
+              <p>Overview</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="https://adminlte.io/docs/3.0" class="nav-link">
-              <i class="nav-icon fas fa-chart-pie"></i>
-              <p>Second menu</p>
+            <a id="electrical" href="#" class="nav-link">
+              <i class="nav-icon fas fa-battery-three-quarters"></i>
+              <p>Electrical power</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a id="internet" href="#" class="nav-link">
+              <i class="nav-icon fas fa-globe"></i>
+              <p>Internet traffic</p>
             </a>
           </li>
           <li class="nav-header">MISCELLANEOUS</li>
@@ -96,58 +102,102 @@
         <!-- Main row -->
         <div class="row">
           <!-- Left col -->
-          <section class="col-lg-7">
+          <section class="col-lg-6">
 
             <!-- solid sales graph -->
-            <div class="card bg-gradient-info">
+            <div id="power-card" class="card bg-gradient-info">
               <div class="card-header border-0">
                 <h3 class="card-title">
-                  <i class="fas fa-th mr-1"></i>
+                  <i class="fas fa-plug mr-1"></i>
+                  Power consumption
+                </h3>
+              </div>
+              <div class="card-body">
+                <canvas id="power-graph" class="chart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+
+            <!-- solid sales graph -->
+            <div id="co2-card" class="card bg-gradient-dark">
+              <div class="card-header border-0">
+                <h3 class="card-title">
+                  <i class="fas fa-smog mr-1"></i>
                   CO₂ equivalent emissions
                 </h3>
               </div>
               <div class="card-body">
-                <canvas class="chart" id="line-chart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                <canvas class="chart" id="co2-graph" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
               </div>
               <!-- /.card-body -->
             </div>
             <!-- /.card -->
-
-            <!-- TEST -->
 
             <!-- solid sales graph -->
-            <div class="card bg-warning">
+            <div id="electrical-power-card" class="card bg-gradient-warning">
               <div class="card-header border-0">
                 <h3 class="card-title">
-                  <i class="fas fa-th mr-1"></i>
-                  Test
+                  <i class="fas fa-plug mr-1"></i>
+                  Electrical power consumption
                 </h3>
               </div>
               <div class="card-body">
-                <canvas class="chart" id="test" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                <canvas id="electrical-power-graph" class="chart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
               </div>
               <!-- /.card-body -->
             </div>
             <!-- /.card -->
 
-            <!-- Custom tabs (Charts with tabs)-->
-            <div class="card">
-              <div class="card-header">
+            <!-- solid sales graph -->
+            <div id="energy-card" class="card bg-gradient-secondary">
+              <div class="card-header border-0">
                 <h3 class="card-title">
-                  <i class="fas fa-chart-pie mr-1"></i>
-                  Source of emissions
+                  <i class="fas fa-battery-three-quarters mr-1"></i>
+                  Energy consumption
                 </h3>
-              </div><!-- /.card-header -->
+              </div>
               <div class="card-body">
-                <canvas id="sales-chart-canvas" height="300" style="height: 300px;"></canvas>
-              </div><!-- /.card-body -->
+                <canvas id="energy-graph" class="chart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+
+            <!-- solid sales graph -->
+            <div id="network-card" class="card bg-gradient-primary">
+              <div class="card-header border-0">
+                <h3 class="card-title">
+                  <i class="fas fa-cloud-download-alt mr-1"></i>
+                  Network usage
+                </h3>
+              </div>
+              <div class="card-body">
+                <canvas id="network-graph" class="chart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+
+            <!-- solid sales graph -->
+            <div id="data-card" class="card bg-gradient-info">
+              <div class="card-header border-0">
+                <h3 class="card-title">
+                  <i class="fas fa-download mr-1"></i>
+                  Transferred data
+                </h3>
+              </div>
+              <div class="card-body">
+                <canvas id="data-graph" class="chart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              </div>
+              <!-- /.card-body -->
             </div>
             <!-- /.card -->
             
           </section>
           <!-- /.Left col -->
           <!-- right col (We are only adding the ID to make the widgets sortable)-->
-          <section class="col-lg-5">
+          <section class="col-lg-6">
 
             <!-- Calendar -->
             <div class="card bg-gradient-primary">
@@ -165,6 +215,51 @@
               <!-- /.card-body -->
             </div>
             <!-- /.card -->
+
+            <!-- Custom tabs (Charts with tabs)-->
+            <div id="source-card" class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-chart-pie mr-1"></i>
+                  Source of emissions
+                </h3>
+              </div><!-- /.card-header -->
+              <div class="card-body">
+                <canvas id="source-graph" height="300" style="height: 300px;"></canvas>
+              </div><!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+
+            <!-- solid sales graph -->
+            <div id="electrical-co2-card" class="card bg-gradient-dark">
+              <div class="card-header border-0">
+                <h3 class="card-title">
+                  <i class="fas fa-smog mr-1"></i>
+                  CO₂ equivalent emissions
+                </h3>
+              </div>
+              <div class="card-body">
+                <canvas class="chart" id="electrical-co2-graph" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+
+            <!-- solid sales graph -->
+            <div id="internet-co2-card" class="card bg-gradient-dark">
+              <div class="card-header border-0">
+                <h3 class="card-title">
+                  <i class="fas fa-smog mr-1"></i>
+                  CO₂ equivalent emissions
+                </h3>
+              </div>
+              <div class="card-body">
+                <canvas class="chart" id="internet-co2-graph" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+
           </section>
           <!-- right col -->
         </div>
@@ -177,7 +272,7 @@
   <footer class="main-footer">
     <strong>Thème: &copy; AdminLTE.io 2014-2019</strong>
     <div class="float-right d-none d-sm-inline-block">
-      <b>Version</b> 3.0.5
+      <b>Version</b> <text id="version"></text>
     </div>
   </footer>
 
@@ -197,6 +292,7 @@
     module = undefined;
   }
 </script>
+<!-- / Electron pre jQuery fix -->
 
 <!-- jQuery -->
 <script src="node_modules/admin-lte/plugins/jquery/jquery.min.js"></script>
@@ -238,5 +334,7 @@
   if (window.module)
     module = window.module;
 </script>
+<!-- / Electron post jQuery fix -->
+
 </body>
 </html>

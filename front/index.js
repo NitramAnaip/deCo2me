@@ -1,92 +1,85 @@
-/*
- * Author: Abdullah A Almsaeed
- * Date: 4 Jan 2014
- * Description:
- *      This is a demo file used only for the main dashboard (index.html)
- **/
+let appVersion = "0.1.0"
+let linePeriod = 60 * 60; //In seconds
+let barPeriod = 3 * 60 * 60; //In seconds
+let graphs = [];
+let pages = [];
+let activePage = null;
 
-$(function () {
+$(initInterface); // Execute main when the page is loaded
 
-  'use strict'
+function initInterface()
+{
+  initStaticComponents();
 
-  //Constant
-  var measurePeriod = 1 * 60 * 60; //Duration between two measurements, in seconds
+  createLineGraph("power-graph", true, 2000, ["Electrical (W)", "Download (W)", "Upload (W)"], (d) => generateRandomTime(d, linePeriod, 3), ["#ebbf31", "#28de23", "#8f24b3"]);
+  createBarGraph("co2-graph", true, 2000, ["Electrical (g)", "Download (g)", "Upload (g)"], (d) => generateRandomTime(d, barPeriod, 3), ["#ebbf31", "#28de23", "#8f24b3"]);
+  createDoughnutGraph("source-graph", true, ["Electrical power", "Download", "Upload"], (d) => generateRandom(d, 1, 3), ["#edce2f", "#2fb555", "#2f97ed"], "#666666");
+  
+  createLineGraph("electrical-power-graph", false, 2000, ["Power (W)"], (d) => generateRandomTime(d, linePeriod, 1), [], "#1F2D3D");
+  createBarGraph("energy-graph", true, 2000, ["Energy (Wh)"], (d) => generateRandomTime(d, barPeriod, 1), ["#3471e3"]);
+  createBarGraph("electrical-co2-graph", true, 2000, ["CO₂ emissions (g)"], (d) => generateRandomTime(d, barPeriod, 1));
 
-  /* jQueryKnob */
-  $('.knob').knob()
+  createLineGraph("network-graph", true, 2000, ["Download (kB/s)", "Upload (kB/s)"], (d) => generateRandomTime(d, linePeriod, 2), ["#28de23", "#8f24b3"]);
+  createBarGraph("data-graph", true, 2000, ["Downloaded (mB)", "Uploaded (mB)"], (d) => generateRandomTime(d, barPeriod, 2), ["#28de23", "#8f24b3"]);
+  createBarGraph("internet-co2-graph", true, 2000, ["CO₂ emissions (g)"], (d) => generateRandomTime(d, barPeriod, 1));
+
+  updateAllGraphs(null);
+
+  
+  let overview = createPage("Overview", "overview");
+  let electrical = createPage("Electrical power", "electrical");
+  let internet = createPage("Internet traffic", "internet");
+
+  addToPage(overview, "power-card");
+  addToPage(overview, "co2-card");
+  addToPage(overview, "source-card");
+  
+  addToPage(electrical, "electrical-power-card")
+  addToPage(electrical, "energy-card")
+  addToPage(electrical, "electrical-co2-card")
+
+  addToPage(internet, "network-card")
+  addToPage(internet, "data-card")
+  addToPage(internet, "internet-co2-card")
+
+  setActivePage(overview);
+}
+
+function initStaticComponents()
+{
+  $("#version").get(0).textContent = appVersion;
 
   // The Calender
-  $('#calendar').datetimepicker({
+  let calendar = $("#calendar");
+  calendar.datetimepicker({
     format: 'L',
     inline: true,
     maxDate: new Date(),
     timepicker: false
-  })
-
-  $("#calendar").on("change.datetimepicker", function (e)
-  {
-    if(e.oldDate !== e.date)
-    {
-      let a = Math.random() * 10000;
-      let w = Math.random() / 2;
-      let phi = Math.random() * 2 * Math.PI;
-    
-      for(var i = 0; i < salesGraphChart.config.data.datasets[0].data.length; i++)
-        salesGraphChartData.datasets[0].data[i] = Math.floor(a * (1 + Math.cos(w * i + phi)));
-      for(i = 0; i < pieData.datasets[0].data.length; i++)
-        pieData.datasets[0].data[i] = Math.floor(Math.random() * 40)
-
-      salesGraphChart.update()
-      pieChart.update()
-
-
-      /* TEST UPDATE */
-      let testA = Math.random() * 10000;
-      let testW = Math.random() / 2;
-      let testPhi = Math.random() * 2 * Math.PI;
-    
-      for(let i = 0; i < labels.length; i++)
-        testData[i] = Math.floor(testA * (1 + Math.cos(testW * i + testPhi)));
-      
-        testGraph.update();
-    }
-})
-
-  // Donut Chart
-  var pieChartCanvas = $('#sales-chart-canvas').get(0).getContext('2d')
-  var pieData        = {
-    labels: [
-        'Power consumption', 
-        'Inbound Internet traffic',
-        'Outbound Internet traffic'
-    ],
-    datasets: [
-      {
-        data: [30,12,20],
-        backgroundColor : ['#edce2f', '#2fb555', '#2f97ed'],
-      }
-    ]
-  }
-  var pieOptions = {
-    maintainAspectRatio : false,
-    responsive : true,
-  }
-  //Create pie or douhnut chart
-  // You can switch between pie and douhnut using the method below.
-  var pieChart = new Chart(pieChartCanvas, {
-    type: 'doughnut',
-    data: pieData,
-    options: pieOptions      
   });
+  calendar.on("change.datetimepicker", onDateChanged);
+}
 
-  // Sales graph chart
-  var salesGraphChartCanvas = $('#line-chart').get(0).getContext('2d');
-  //$('#revenue-chart').get(0).getContext('2d');
+function generateRandom(data, dimension, count)
+{
+  for(let i = 0; i < dimension; i++)
+  {
+    let randomData = [];
+    let a = Math.random() * 10000;
+    let w = Math.random() / 2;
+    let phi = Math.random() * 2 * Math.PI;
 
+    for(let j = 0; j < count; j++)
+      randomData.push(Math.floor(a * (1 + Math.cos(w * j + phi))));
+
+    data.datasets[i].data = randomData;
+  }
+}
+
+function generateRandomTime(data, measurePeriod, dimension)
+{
   let numOfMeasurements = Math.ceil(86400 / measurePeriod) + 1;
   let labels = [];
-  let data = [];
-
   let measurementDate = new Date(2000, 1, 1, 0, 0, 0, 0);
 
   for(let i = 0; i < numOfMeasurements; i++)
@@ -95,140 +88,263 @@ $(function () {
     measurementDate.setSeconds(measurementDate.getSeconds() + measurePeriod);
   }
 
-  let a = Math.random() * 10000;
-  let w = Math.random() / 2;
-  let phi = Math.random() * 2 * Math.PI;
+  data.labels = labels;
+  generateRandom(data, dimension, labels.length);
+}
 
-  for(let i = 0; i < labels.length; i++)
-    data.push(Math.floor(a * (1 + Math.cos(w * i + phi))));
+function onDateChanged(e)
+{
+  if(e.oldDate !== e.date)
+    updateAllGraphs(null);
+}
 
-  var salesGraphChartData = {
-    labels  : labels,
-    datasets: [
-      {
-        label               : 'Digital Goods',
-        fill                : false,
-        borderWidth         : 2,
-        lineTension         : 0,
-        spanGaps : true,
-        borderColor         : '#efefef',
-        pointRadius         : 3,
-        pointHoverRadius    : 7,
-        pointColor          : '#efefef',
-        pointBackgroundColor: '#efefef',
-        data                : data
-      }
-    ]
+
+/** Graph management **/
+
+function updateAllGraphs(dayData)
+{
+  graphs.forEach((graph) => {
+    updateGraph(graph, dayData);
+  });
+}
+
+function createLineGraph(componentId, showLegend, step, dataName, dataUpdater, dataColor, graphColor)
+{
+  let component = $(`#${componentId}`).get(0);
+  let canvas = component.getContext('2d');
+
+  if(graphColor == null)
+    graphColor = '#efefef';
+
+  let data = {
+    labels  : [],
+    datasets: []
   }
 
-  var salesGraphChartOptions = {
-    maintainAspectRatio : false,
-    responsive : true,
-    legend: {
-      display: false,
-    },
-    scales: {
-      xAxes: [{
-        ticks : {
-          fontColor: '#efefef',
-        },
-        gridLines : {
-          display : false,
-          color: '#efefef',
-          drawBorder: false,
-        }
-      }],
-      yAxes: [{
-        ticks : {
-          stepSize: 5000,
-          fontColor: '#efefef',
-        },
-        gridLines : {
-          display : true,
-          color: '#efefef',
-          drawBorder: false,
-        }
-      }]
-    }
+  for(let i = 0; i < dataName.length; i++)
+  {
+    let color = dataColor != null && dataColor.length > i ? dataColor[i] : graphColor;
+
+    data.datasets.push({
+      label               : dataName[i],
+      fill                : false,
+      borderWidth         : 2,
+      lineTension         : 0,
+      spanGaps            : true,
+      borderColor         : color,
+      pointRadius         : 3,
+      pointHoverRadius    : 7,
+      pointColor          : color,
+      pointBackgroundColor: color,
+      data                : []
+    });
   }
 
-  // This will get the first returned node in the jQuery collection.
-  var salesGraphChart = new Chart(salesGraphChartCanvas, { 
-      type: 'line', 
-      data: salesGraphChartData, 
-      options: salesGraphChartOptions
-    }
-  )
-
-
-  /* TEST */
-
-  var testCanvas = $('#test').get(0).getContext('2d');
-
-  let testData = [];
-
-  let testA = Math.random() * 10000;
-  let testW = Math.random() / 2;
-  let testPhi = Math.random() * 2 * Math.PI;
-
-  for(let i = 0; i < labels.length; i++)
-  testData.push(Math.floor(testA * (1 + Math.cos(testW * i + testPhi))));
-
-  var testGraphData = {
-    labels  : labels,
-    datasets: [
-      {
-        label               : 'Digital Goods',
-        fill                : false,
-        borderWidth         : 2,
-        lineTension         : 0,
-        spanGaps : true,
-        borderColor         : '#efefef',
-        pointRadius         : 3,
-        pointHoverRadius    : 7,
-        pointColor          : '#efefef',
-        pointBackgroundColor: '#efefef',
-        data                : testData
-      }
-    ]
-  }
-
-  var testGraphOptions = {
-    maintainAspectRatio : false,
-    responsive : true,
-    legend: {
-      display: false,
-    },
-    scales: {
-      xAxes: [{
-        ticks : {
-          fontColor: '#efefef',
-        },
-        gridLines : {
-          display : false,
-          color: '#efefef',
-          drawBorder: false,
-        }
-      }],
-      yAxes: [{
-        ticks : {
-          stepSize: 5000,
-          fontColor: '#efefef',
-        },
-        gridLines : {
-          display : true,
-          color: '#efefef',
-          drawBorder: false,
-        }
-      }]
-    }
-  }
-
-  var testGraph = new Chart(testCanvas, { 
+  let chart = new Chart(canvas, { 
     type: 'line', 
-    data: testGraphData, 
-    options: testGraphOptions
-  }
-)
+    data: data, 
+    options: createGraphOptions(showLegend, step, graphColor)
+  });
 
-})
+  let graph = {
+    component: component,
+    chart: chart,
+    data: data,
+    dataUpdater: dataUpdater
+  }
+
+  graphs.push(graph);
+  return graph;
+}
+
+function createBarGraph(componentId, showLegend, step, dataName, dataUpdater, dataColor, graphColor)
+{
+  let component = $(`#${componentId}`).get(0);
+  let canvas = component.getContext('2d');
+
+  if(graphColor == null)
+    graphColor = '#efefef';
+
+  let data = {
+    labels  : [],
+    datasets: []
+  }
+
+  for(let i = 0; i < dataName.length; i++)
+  {
+    let color = dataColor != null && dataColor.length > i ? dataColor[i] : graphColor;
+
+    data.datasets.push({
+      label               : dataName[i],
+      fill                : false,
+      borderWidth         : 2,
+      lineTension         : 0,
+      spanGaps            : true,
+      backgroundColor     : color,
+      borderColor         : color,
+      pointRadius         : false,
+      pointColor          : color,
+      pointBackgroundColor: color,
+      data                : []
+    });
+  }
+
+  let chart = new Chart(canvas, { 
+    type: 'bar', 
+    data: data, 
+    options: createGraphOptions(showLegend, step, graphColor)
+  });
+
+  let graph = {
+    component: component,
+    chart: chart,
+    data: data,
+    dataUpdater: dataUpdater
+  }
+
+  graphs.push(graph);
+  return graph;
+}
+
+function createDoughnutGraph(componentId, showLegend, dataName, dataUpdater, dataColor, graphColor)
+{
+  if(dataName.length != dataColor.length)
+  {
+    console.error(`Unable to create graph: ${dataName.length} names, ${dataColor.length} colors`);
+    return null;
+  }
+
+  let component = $(`#${componentId}`).get(0);
+  let canvas = component.getContext('2d');
+
+  if(graphColor == null)
+    graphColor = '#efefef';
+
+  let data = {
+    labels: dataName,
+    datasets: [
+      {
+        data: [],
+        backgroundColor : dataColor,
+      }
+    ]
+  }
+
+  let options = createGraphOptions(showLegend, null, graphColor);
+
+  let chart = new Chart(canvas, {
+    type: 'doughnut',
+    data: data,
+    options: options      
+  });
+
+  let graph = {
+    component: component,
+    chart: chart,
+    data: data,
+    dataUpdater: dataUpdater
+  }
+
+  graphs.push(graph);
+  return graph;
+}
+
+function createGraphOptions(showLegend, step, graphColor)
+{
+  let options = {
+    maintainAspectRatio : false,
+    responsive : true,
+    legend: {
+      display: showLegend,
+      labels: {
+        fontColor: graphColor
+      }
+    }
+  }
+
+  if(step != null)
+  {
+    options.scales = {
+      xAxes: [{
+        ticks : {
+          fontColor: graphColor,
+        },
+        gridLines : {
+          display : false,
+          color: graphColor,
+          drawBorder: false,
+        }
+      }],
+      yAxes: [{
+        ticks : {
+          stepSize: step,
+          fontColor: graphColor,
+        },
+        gridLines : {
+          display : true,
+          color: graphColor,
+          drawBorder: false,
+        }
+      }]
+    }
+  }
+
+  return options;
+}
+
+function updateGraph(graph, dayData)
+{
+  graph.dataUpdater(graph.data, dayData);
+  graph.chart.update();
+}
+
+
+/** Page management **/
+
+function createPage(name, linkId)
+{
+  let link = $(`#${linkId}`).get(0);
+
+  let page = {
+    name: name,
+    link: link,
+    elements: []
+  };
+
+  link.onclick = () => onPageLinkClick(page);
+
+  pages.push(page);
+  return page;
+}
+
+function addToPage(page, componentId)
+{
+  page.elements.push($(`#${componentId}`).get(0));
+}
+
+function setActivePage(page)
+{
+  if(page != activePage)
+  {
+    pages.forEach(p => {
+
+      if(p == page)
+        p.link.classList.add("active");
+      else if(p.link.classList.contains("active"))
+        p.link.classList.remove("active");
+      
+      p.elements.forEach(e => {
+        e.hidden = p != page;
+      });
+    });
+
+    $("#current-menu").get(0).textContent = page.name;
+    activePage = page;
+  }
+}
+
+function onPageLinkClick(page)
+{
+  setActivePage(page);
+  page.link.blur();
+}
