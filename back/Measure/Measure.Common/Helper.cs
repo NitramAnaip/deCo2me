@@ -21,17 +21,40 @@ namespace Measure.Common
 			Console.WriteLine(Environment.MachineName);
 		}
 
-		public static void OutputNetworkUpDown()
+		public static void OutputNetworkWiredUpDown()
 		{
 			long up = 0;
 			long down = 0;
 
 			foreach(NetworkInterface net in NetworkInterface.GetAllNetworkInterfaces())
 			{
-				IPInterfaceStatistics netStat = net.GetIPStatistics();
+				if(net.NetworkInterfaceType != NetworkInterfaceType.Wireless80211)
+				{
+					IPInterfaceStatistics netStat = net.GetIPStatistics();
 
-				up += netStat.BytesSent;
-				down += netStat.BytesReceived;
+					up += netStat.BytesSent;
+					down += netStat.BytesReceived;
+				}
+			}
+
+			Console.WriteLine(up);
+			Console.WriteLine(down);
+		}
+
+		public static void OutputNetworkWirelessUpDown()
+		{
+			long up = 0;
+			long down = 0;
+
+			foreach(NetworkInterface net in NetworkInterface.GetAllNetworkInterfaces())
+			{
+				if(net.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
+				{
+					IPInterfaceStatistics netStat = net.GetIPStatistics();
+
+					up += netStat.BytesSent;
+					down += netStat.BytesReceived;
+				}
 			}
 
 			Console.WriteLine(up);

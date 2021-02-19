@@ -10,7 +10,7 @@ $(function () {
   'use strict'
 
   //Constant
-  var measurePeriod = 30 * 60; //Duration between two measurements, in seconds
+  var measurePeriod = 1 * 60 * 60; //Duration between two measurements, in seconds
 
   /* jQueryKnob */
   $('.knob').knob()
@@ -25,7 +25,7 @@ $(function () {
 
   $("#calendar").on("change.datetimepicker", function (e)
   {
-    if (e.oldDate !== e.date)
+    if(e.oldDate !== e.date)
     {
       let a = Math.random() * 10000;
       let w = Math.random() / 2;
@@ -38,6 +38,17 @@ $(function () {
 
       salesGraphChart.update()
       pieChart.update()
+
+
+      /* TEST UPDATE */
+      let testA = Math.random() * 10000;
+      let testW = Math.random() / 2;
+      let testPhi = Math.random() * 2 * Math.PI;
+    
+      for(let i = 0; i < labels.length; i++)
+        testData[i] = Math.floor(testA * (1 + Math.cos(testW * i + testPhi)));
+      
+        testGraph.update();
     }
 })
 
@@ -148,5 +159,76 @@ $(function () {
       options: salesGraphChartOptions
     }
   )
+
+
+  /* TEST */
+
+  var testCanvas = $('#test').get(0).getContext('2d');
+
+  let testData = [];
+
+  let testA = Math.random() * 10000;
+  let testW = Math.random() / 2;
+  let testPhi = Math.random() * 2 * Math.PI;
+
+  for(let i = 0; i < labels.length; i++)
+  testData.push(Math.floor(testA * (1 + Math.cos(testW * i + testPhi))));
+
+  var testGraphData = {
+    labels  : labels,
+    datasets: [
+      {
+        label               : 'Digital Goods',
+        fill                : false,
+        borderWidth         : 2,
+        lineTension         : 0,
+        spanGaps : true,
+        borderColor         : '#efefef',
+        pointRadius         : 3,
+        pointHoverRadius    : 7,
+        pointColor          : '#efefef',
+        pointBackgroundColor: '#efefef',
+        data                : testData
+      }
+    ]
+  }
+
+  var testGraphOptions = {
+    maintainAspectRatio : false,
+    responsive : true,
+    legend: {
+      display: false,
+    },
+    scales: {
+      xAxes: [{
+        ticks : {
+          fontColor: '#efefef',
+        },
+        gridLines : {
+          display : false,
+          color: '#efefef',
+          drawBorder: false,
+        }
+      }],
+      yAxes: [{
+        ticks : {
+          stepSize: 5000,
+          fontColor: '#efefef',
+        },
+        gridLines : {
+          display : true,
+          color: '#efefef',
+          drawBorder: false,
+        }
+      }]
+    }
+  }
+
+  var testGraph = new Chart(testCanvas, { 
+    type: 'line', 
+    data: testGraphData, 
+    options: testGraphOptions
+  }
+)
 
 })

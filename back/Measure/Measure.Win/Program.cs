@@ -16,8 +16,10 @@ namespace Measure.Win
 
 			if(command == "name")
 				Helper.OutputComputerName();
-			else if(command == "net")
-				Helper.OutputNetworkUpDown();
+			else if(command == "netWired")
+				Helper.OutputNetworkWiredUpDown();
+			else if(command == "netWireless")
+				Helper.OutputNetworkWirelessUpDown();
 			else if(command == "model")
 				OutputComputerModel();
 			else if(command == "power")
