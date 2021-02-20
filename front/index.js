@@ -40,6 +40,7 @@ function initInterface()
   addToPage(overview, "power-card");
   addToPage(overview, "co2-card");
   addToPage(overview, "source-card");
+  addToPage(overview, "computer-card")
   
   addToPage(electrical, "electrical-power-card")
   addToPage(electrical, "energy-card")
@@ -65,6 +66,29 @@ function initStaticComponents()
     timepicker: false
   });
   calendar.on("change.datetimepicker", onDateChanged);
+
+  fs.readFile(`./data/global.json`, 'utf8' , (err, data) => {
+    let computerInfo = "Unknown";
+
+    if (err)
+    {
+      console.error(`Unable to read global JSON file: ${err}`);
+    }
+    else
+    {
+      try
+      {
+        let global = JSON.parse(data);
+        computerInfo = `${global.computerManufacturer} ${global.computerModel}`;
+      }
+      catch(error)
+      {
+        console.error("Unable to parse global JSON file");
+      }
+    }
+
+    $("#computer").get(0).textContent = computerInfo;
+  })
 }
 
 
@@ -258,8 +282,6 @@ function updateInternetCo2Graph(data)
       upPowerCo2.push((newData[2][i] * netWiredEnergy + newData[3][i] * netWirelessEnergy) * co2PerEnergy); //in g
     }
   }
-
-  console.log(JSON.stringify(downPowerCo2));
 
   data.datasets[0].data = downPowerCo2;
   data.datasets[1].data = upPowerCo2;
