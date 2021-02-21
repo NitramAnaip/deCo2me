@@ -10,6 +10,7 @@ let co2PerEnergy = 80; //g per kWh (France)
 let graphs = [];
 let pages = [];
 let activePage = null;
+let activeDay = null;
 let dayData = null;
 
 $(initInterface); // Execute main when the page is loaded
@@ -99,12 +100,12 @@ function updatePowerGraph(data)
   let power = [];
   let downPower = [];
   let upPower = [];
+  let period = linePeriod;
+
+  data.labels = getTimeLabels(period);
 
   if(dayData != null)
   {
-    let period = linePeriod;
-
-    data.labels = getTimeLabels(period);
     let newData = resampleData([dayData.power, dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, [true, false, false, false, false]);
     power = newData[0];
 
@@ -125,17 +126,17 @@ function updateCo2Graph(data)
   let powerCo2 = [];
   let downPowerCo2 = [];
   let upPowerCo2 = [];
+  let period = barPeriod;
+
+  data.labels = getTimeLabels(period);
 
   if(dayData != null)
   {
-    let period = barPeriod;
-
-    data.labels = getTimeLabels(period);
-    let newData = resampleData([dayData.power, dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, [false, false, false, false, false]);
+    let newData = resampleData([dayData.power, dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, [true, false, false, false, false]);
   
     for(let i = 0; i < newData[0].length; i++)
     {
-      powerCo2.push(newData[0][i] / 1000 * (dayData.measurePeriod / 3600) * co2PerEnergy); //in g
+      powerCo2.push(newData[0][i] / 1000 * (period / 3600) * co2PerEnergy); //in g
       downPowerCo2.push((newData[1][i] * netWiredEnergy + newData[2][i] * netWirelessEnergy) * co2PerEnergy); //in g
       upPowerCo2.push((newData[3][i] * netWiredEnergy + newData[4][i] * netWirelessEnergy) * co2PerEnergy); //in g
     }
@@ -152,11 +153,13 @@ function updateSourceGraph(data)
 
   if(dayData != null)
   {
+    let averagePeriod = dayData.timestamps.length >= 2 ? (dayData.timestamps[dayData.timestamps.length - 1] - dayData.timestamps[0]) / (dayData.timestamps.length - 1) / 1000 : undefined; //in s
+
     gData = [0, 0, 0];
   
     for(let i = 0; i < dayData.power.length; i++)
     {
-      gData[0] += dayData.power[i] / 1000 * (dayData.measurePeriod / 3600) * co2PerEnergy; //in g
+      gData[0] += dayData.power[i] / 1000 * (averagePeriod / 3600) * co2PerEnergy; //in g
       gData[1] += (dayData.netDownWired[i] * netWiredEnergy + dayData.netDownWireless[i] * netWirelessEnergy) * co2PerEnergy; //in g
       gData[2] += (dayData.netUpWired[i] * netWiredEnergy + dayData.netUpWireless[i] * netWirelessEnergy) * co2PerEnergy; //in g
     }
@@ -168,14 +171,12 @@ function updateSourceGraph(data)
 function updateElectricalPowerGraph(data)
 {
   let power = [];
+  let period = linePeriod;
+
+  data.labels = getTimeLabels(period);
 
   if(dayData != null)
-  {
-    let period = linePeriod;
-
-    data.labels = getTimeLabels(period);
     power = resampleData([dayData.power], period, [true])[0];
-  }
 
   data.datasets[0].data = power;
 }
@@ -183,16 +184,16 @@ function updateElectricalPowerGraph(data)
 function updateEnergyGraph(data)
 {
   let energy = [];
+  let period = barPeriod;
+
+  data.labels = getTimeLabels(period);
 
   if(dayData != null)
   {
-    let period = barPeriod;
-
-    data.labels = getTimeLabels(period);
-    let newData = resampleData([dayData.power], period, [false])[0];
+    let newData = resampleData([dayData.power], period, [true])[0];
 
     for(let i = 0; i < newData.length; i++)
-      energy.push(newData[i] * (dayData.measurePeriod / 3600)); //in wH
+      energy.push(newData[i] * (period / 3600)); //in wH
   }
 
   data.datasets[0].data = energy;
@@ -201,16 +202,16 @@ function updateEnergyGraph(data)
 function updateElectricalCo2Graph(data)
 {
   let powerCo2 = [];
+  let period = barPeriod;
+
+  data.labels = getTimeLabels(period);
 
   if(dayData != null)
   {
-    let period = barPeriod;
-
-    data.labels = getTimeLabels(period);
-    let newData = resampleData([dayData.power], period, [false])[0];
+    let newData = resampleData([dayData.power], period, [true])[0];
   
     for(let i = 0; i < newData.length; i++)
-      powerCo2.push(newData[i] / 1000 * (dayData.measurePeriod / 3600) * co2PerEnergy); //in g
+      powerCo2.push(newData[i] / 1000 * (period / 3600) * co2PerEnergy); //in g
   }
 
   data.datasets[0].data = powerCo2;
@@ -220,12 +221,12 @@ function updateNetworkGraph(data)
 {
   let down = [];
   let up = [];
+  let period = linePeriod;
+
+  data.labels = getTimeLabels(period);
 
   if(dayData != null)
   {
-    let period = linePeriod;
-
-    data.labels = getTimeLabels(period);
     let newData = resampleData([dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, [false, false, false, false]);
     power = newData[0];
 
@@ -244,12 +245,12 @@ function updateDataGraph(data)
 {
   let down = [];
   let up = [];
+  let period = barPeriod;
+
+  data.labels = getTimeLabels(period);
 
   if(dayData != null)
   {
-    let period = barPeriod;
-
-    data.labels = getTimeLabels(period);
     let newData = resampleData([dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, [false, false, false, false]);
     power = newData[0];
 
@@ -268,12 +269,12 @@ function updateInternetCo2Graph(data)
 {
   let downPowerCo2 = [];
   let upPowerCo2 = [];
+  let period = barPeriod;
+
+  data.labels = getTimeLabels(period);
 
   if(dayData != null)
   {
-    let period = barPeriod;
-
-    data.labels = getTimeLabels(period);
     let newData = resampleData([dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, [false, false, false, false]);
   
     for(let i = 0; i < newData[0].length; i++)
@@ -289,44 +290,51 @@ function updateInternetCo2Graph(data)
 
 function resampleData(data, period, mean)
 {
-  let end = getTimeEnd();
-  let nextFrame = getTime(0, 0, 0);
-  let timeCursor = getTime(0, 0, 0);
-  let measureCursor = 0;
+  let nextPoint = getTime(activeDay, 0, 0, 0);
   let newData = [];
   let counter = [];
   let measureCount = 0;
 
-  for(let i = 0; i < data.length; i++)
+  for(let j = 0; j < data.length; j++)
   {
     newData.push([]);
     counter.push(0);
   }
 
-  nextFrame.setSeconds(nextFrame.getSeconds() + period);
+  nextPoint.setSeconds(nextPoint.getSeconds() + period);
 
-  do
+  for(let i = 0; i <= dayData.timestamps.length; i++)
   {
-    for(let i = 0; i < data.length; i++)
-      counter[i] += data[i][measureCursor]; //Adding the data measured within a time period
-    
-    measureCount++;
-    measureCursor++;
+    let addPoint = false;
 
-    timeCursor.setSeconds(timeCursor.getSeconds() + dayData.measurePeriod);
-
-    if(timeCursor >= nextFrame)
+    if(i < dayData.timestamps.length)
     {
-      for(let i = 0; i < data.length; i++)
+      let measureDate = new Date(dayData.timestamps[i]);
+      console.log(measureDate.toTimeString() + " ; " + nextPoint.toTimeString());
+
+      if(measureDate < nextPoint)
       {
-        newData[i].push(mean[i] ? counter[i] / measureCount : counter[i]);
-        counter[i] = 0;
-        measureCount = 0;
+        for(let j = 0; j < data.length; j++)
+          counter[j] += data[j][i]; //Adding the data measured within a time period
+        measureCount++;
       }
-      nextFrame.setSeconds(nextFrame.getSeconds() + period);
+      else addPoint = true;
+    }
+    else if(measureCount > 0) //Adding the remaining data after the iteration is finished
+      addPoint = true;
+    
+    if(addPoint)
+    {
+      for(let j = 0; j < data.length; j++)
+      {
+        newData[j].push(measureCount > 0 ? (mean[j] ? counter[j] / measureCount : counter[j]) : undefined);
+        counter[j] = 0;
+      }
+
+      measureCount = 0;
+      nextPoint.setSeconds(nextPoint.getSeconds() + period);
     }
   }
-  while(timeCursor < end && measureCursor < data[0].length)
 
   return newData;
 }
@@ -335,7 +343,7 @@ function getTimeLabels(period)
 {
   let numOfMeasurements = Math.ceil(86400 / period);
   let labels = [];
-  let date = getTime(0, 0, 0);
+  let date = getTime(new Date(), 0, 0, 0); //Any day has 24h, so the date actually doesn't matter
 
   for(let i = 0; i < numOfMeasurements; i++)
   {
@@ -358,6 +366,8 @@ function onDateChanged(e)
 
 function selectDay(date)
 {
+  activeDay = date;
+
   fs.readFile(`./data/${formatDate(date)}.json`, 'utf8' , (err, data) => {
     if (err)
     {
@@ -550,23 +560,24 @@ function createGraphOptions(showLegend, step, graphColor)
     options.scales = {
       xAxes: [{
         ticks : {
-          fontColor: graphColor,
+          fontColor: graphColor
         },
         gridLines : {
           display : false,
           color: graphColor,
-          drawBorder: false,
+          drawBorder: false
         }
       }],
       yAxes: [{
         ticks : {
           stepSize: step,
           fontColor: graphColor,
+          beginAtZero: true
         },
         gridLines : {
           display : true,
           color: graphColor,
-          drawBorder: false,
+          drawBorder: false
         }
       }]
     }
@@ -649,12 +660,13 @@ function formatDate(date)
   return [year, month, day].join('-');
 }
 
-function getTime(hours, minutes, seconds)
+function getTime(day, hours, minutes, seconds)
 {
-  return new Date(2000, 1, 1, hours, minutes, seconds, 0); //Any day has 24h, so the date actually doesn't matter
-}
+  date = new Date(+day);
+  date.setHours(hours);
+  date.setMinutes(minutes);
+  date.setSeconds(seconds);
+  date.setMilliseconds(0);
 
-function getTimeEnd()
-{
-  return new Date(2000, 1, 2, 0, 0, 0, 0); //The end of the 24h time frame. Any day has 24h, so the date actually doesn't matter (it's relative to the Date given by getTime)
+  return date;
 }
