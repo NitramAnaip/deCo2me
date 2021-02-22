@@ -19,8 +19,32 @@ Todo:
 
 import os
 import subprocess
-import pandas as pd
-from io import StringIO
+import json
+import os
+
+
+
+
+def folder_creation(json_file_path):
+
+
+    if not os.path.isfile(json_file_path):
+        #period in seconds
+        json_file = {
+            "timestamps": [],
+            "netUpWired": [],
+            "netDownWired": [],
+            "netUpWireless": [],
+            "netDownWireless": [],
+            "power": []
+        }
+
+        with open (json_file_path, "w") as f:
+            json.dump(json_file, f)
+
+    return 0
+
+
 
 
 units = {"MiB" : 10e5, "GiB" : 10e8, "KiB": 10e2}# not sure about KiB (maybe a lowercase)
@@ -38,11 +62,10 @@ def fetch_rt_data_usage(date, network):
     network is the network interface we are focusing on. In my case its wlo1 but it depends whether its (wifi/network) or ethernet
     In order to get the total consumption I'll need to run it on all different types of networks 
 
-    OUTPUTS: a float (quantity) of bytes consumed up to now today
+    OUTPUTS: a list with [received, sent ] all in Bytes
     """
-    # Executes command in terminal
-    #careful: 
 
+    #***********With linux commands:
     command = ['vnstat', '-i', network, '-d']
     # run vnstat -i wlo1 -d to see what the value of p is
     p = subprocess.Popen(command, stdout=subprocess.PIPE)
@@ -52,29 +75,40 @@ def fetch_rt_data_usage(date, network):
 
     # retrieves data and transforms it
     s=str(bytes_data,'utf-8')
-    #print(s)
+
 
     a = s.split("\n")
     #print(a)
     interesting = None
-    for i in range (len(a)):
-        if date in a[i]:
-            interesting = a[i]
-    a = interesting.split('|')
+    try:
+        for i in range (len(a)):
+            if date in a[i]:
+                interesting = a[i]
+        a = interesting.split('|')
 
-    #Note: this might be something leading to mistakes(I visually saw that nbr 2 was where my interesting info was)
-    s = a[2]
-    print(s)
-    unit = ''.join(x for x in s if x.isalpha())
-    quantity = ''.join(x for x in s if not x.isalpha())
-    quantity = quantity.replace(',', '.')
-    print("you've consumed " + quantity + " " + unit)
-    return float(quantity) * units[unit]
+        #print(a)
+        #Note: this might be something leading to mistakes(I visually saw that nbr 2 was where my interesting info was)
+        tot = a[2]
+        sent = a[1]
+        net_data = [tot, sent]
+        for i,d in enumerate (net_data):
+            unit = ''.join(x for x in d if x.isalpha())
+            quantity = ''.join(x for x in d if not x.isalpha())
+            quantity = quantity.replace(',', '.')
+            net_data[i] = float(quantity) * units[unit]
 
-"""
-a = fetch_rt_data_usage("2020-12-04", "wlo1")
-print(a)
-"""
+        net_data[0] = net_data[0] - net_data[1]
+
+    
+    except:
+        net_data = [0.0, 0.0]
+    # With call to cross platform method:
+
+    return net_data
+
+
+
+
 
 def fetch_hourly_data_usage(network):
     """
@@ -147,7 +181,7 @@ def fetch_daily_data_usage(network):
 
 def fetch_battery_cons():
     """
-    Returns the KWh consumption (refreshed every 120s) due to terminal consumption
+    Returns the Wh consumption (refreshed every 120s) due to terminal consumption
     """
     #refreshed every 120s
     command = ['upower', '-i', '/org/freedesktop/UPower/devices/battery_BAT0']
@@ -162,12 +196,11 @@ def fetch_battery_cons():
     for i in range (len(a)):
         if "energy-rate" in a[i]:
             interesting = a[i]
+    #print(interesting)
     interesting = interesting.replace("energy-rate:", "")
     interesting = interesting.replace("W", "")
     interesting = interesting.replace(",", ".")
     power = float(interesting)
-
-
 
     return power * (1/30) * 10e-3
 
@@ -199,7 +232,7 @@ def get_pc_name():
 
 
 
-def get manufacturing_cost(manufacturing_data):
+def get_manufacturing_cost(manufacturing_data):
     """
     If the pc name isn't in the database we'll use the ADEME's value by default
     It is a very coarse approximation (that is even very low when compared to other values given by manufacturers for whatever reason)
@@ -210,6 +243,8 @@ def get manufacturing_cost(manufacturing_data):
     return cost
 
 
+
+"""
 
 
 a = fetch_rt_data_usage("2021-02-08", "wlo1")
@@ -233,7 +268,7 @@ print(fetch_battery_cons(), " KWh")
 print(fetch_battery_cons() * energetic_mix["France"] *240, "g Co2 today due to battery usage")
 
 # this would probably do a good job of it
-"""
+
 import schedule
 import time
 
