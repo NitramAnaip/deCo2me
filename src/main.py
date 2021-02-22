@@ -6,21 +6,21 @@ from datetime import date
 from data_gatherer import get_pc_name, fetch_rt_data_usage, fetch_battery_cons, folder_creation
 
 
-today = str(date.today())
 
 
-period = 10
-json_folder = "/home/martin/Desktop/deCo2me/deCo2me/"
-json_file_path = json_folder + today + ".json"
+
+period = 300
 
 
-folder_creation(json_file_path, period)
+
 
 
 
 
 
 while True:
+    folder_creation(json_file_path)# If someone leaves the computer on during the night we still need the program to create a new file as 
+                                    # the date xhanges. Thus we must leave this function call in the while 
     with open (json_file_path, "r") as f:
         json_file = json.load(f)
 
