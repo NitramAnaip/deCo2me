@@ -22,7 +22,7 @@ if %errorLevel% == 0 (
 
     echo %APPNAME% uninstalled successfully.
 ) else (
-    echo Please execute uninstall.bat as administrator to install the app.
+    echo Please execute uninstall.bat as administrator to uninstall the app.
 )
 
 pause
