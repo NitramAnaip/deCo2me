@@ -20,15 +20,13 @@ Todo:
 import os
 import subprocess
 import json
-import os
+from datetime import date
 
 
 
 
-def folder_creation():
-    today = str(date.today())
-    json_folder = "/home/martin/Desktop/deCo2me/deCo2me/"
-    json_file_path = json_folder + today + ".json"
+def folder_creation(json_file_path):
+    
     if not os.path.isfile(json_file_path):
         #period in seconds
         json_file = {
