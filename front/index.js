@@ -153,7 +153,7 @@ function updateSourceGraph(data)
 
   if(dayData != null)
   {
-    let averagePeriod = dayData.timestamps.length >= 2 ? (dayData.timestamps[dayData.timestamps.length - 1] - dayData.timestamps[0]) / (dayData.timestamps.length - 1) / 1000 : undefined; //in s
+    let averagePeriod = dayData.timestamps.length >= 2 ? (dayData.timestamps[dayData.timestamps.length - 1] - dayData.timestamps[0]) / (dayData.timestamps.length - 1) : undefined; //in s
 
     gData = [0, 0, 0];
   
@@ -309,7 +309,7 @@ function resampleData(data, period, mean)
 
     if(i < dayData.timestamps.length)
     {
-      let measureDate = new Date(dayData.timestamps[i]);
+      let measureDate = new Date(dayData.timestamps[i] * 1000);
       console.log(measureDate.toTimeString() + " ; " + nextPoint.toTimeString());
 
       if(measureDate < nextPoint)

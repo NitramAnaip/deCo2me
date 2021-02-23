@@ -10,7 +10,7 @@ object.netDownWireless = [];
 object.power = [];
 
 let points = 86400/measurePeriod + 1;
-let maxValue = [3000000000, 1500000000, 3000000000, 1500000000, 70];
+let maxValue = [50000 * measurePeriod, 100000 * measurePeriod, 50000 * measurePeriod, 100000 * measurePeriod, 70];
 let a = [];
 let w = [];
 let phi = [];
@@ -30,7 +30,7 @@ for(let i = 0; i < 5; i++)
 
 for(let i = 0; i < points; i++)
 {
-  object.timestamps.push(+date); //Converting date to timestamp
+  object.timestamps.push(date / 1000); //Converting date to timestamp (in s)
   object.netUpWired.push(Math.floor(a[0] * (1 + Math.cos(w[0] * i + phi[0]))));
   object.netDownWired.push(Math.floor(a[1] * (1 + Math.cos(w[1] * i + phi[1]))));
   object.netUpWireless.push(Math.floor(a[2] * (1 + Math.cos(w[2] * i + phi[2]))));
