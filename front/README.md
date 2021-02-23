@@ -14,4 +14,6 @@ To install and run the application, one needs to:
 
 ## Build
 
-To build the app, simply use npm with `npm make`
+To build the app, simply use npm with `npm run make`.
+
+To package the app without creating an installer on Windows, use `npm run package`

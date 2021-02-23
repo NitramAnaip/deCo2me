@@ -588,7 +588,7 @@ function createGraphOptions(showLegend, step, graphColor)
 
 function updateGraph(graph)
 {
-  graph.dataUpdater(graph.data);
+  graph.dataUpdater(graph.data); //dataUpdater is a variable of the type 'function'
   graph.chart.update();
 }
 
