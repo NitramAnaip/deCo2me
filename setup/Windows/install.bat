@@ -21,9 +21,10 @@ if %errorLevel% == 0 (
     powershell "$s=(New-Object -COM WScript.Shell).CreateShortcut('%USERPROFILE%\Desktop\%APPNAME%.lnk');$s.TargetPath='%CD%\%EXE_NAME%';$s.WorkingDirectory='%CD%';$s.Save()"
 
     echo %APPNAME% installed successfully !
-    pause
 ) else (
     echo Please execute install.bat as administrator to install the app.
 )
+
+pause
 
 endlocal

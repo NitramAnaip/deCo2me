@@ -21,9 +21,10 @@ if %errorLevel% == 0 (
     del "%USERPROFILE%\Desktop\%APPNAME%.lnk"
 
     echo %APPNAME% uninstalled successfully.
-    pause
 ) else (
-    echo Please execute install.bat as administrator to install the app.
+    echo Please execute uninstall.bat as administrator to install the app.
 )
+
+pause
 
 endlocal
