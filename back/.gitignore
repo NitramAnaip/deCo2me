@@ -1,0 +1,11 @@
+# VS files
+.suo/
+.vs/
+
+# VS build output
+bin/
+obj/
+
+# VS per-project user configuration
+*.csproj.user
+*.pubxml.user
