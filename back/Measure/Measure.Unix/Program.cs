@@ -10,9 +10,9 @@ namespace Measure.Unix
 
 			if(command == "name")
 				Helper.OutputComputerName();
-			else if(command == "netWired")
+			else if(command == "netwired")
 				Helper.OutputNetworkWiredUpDown();
-			else if(command == "netWireless")
+			else if(command == "netwireless")
 				Helper.OutputNetworkWirelessUpDown();
 			else Helper.OutputUnknownCommand();
 		}
