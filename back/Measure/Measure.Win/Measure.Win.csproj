@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <Version>0.1.0</Version>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0</FileVersion>
+    <Description>Windows-specific part of the Measure Program</Description>
+    <Company>Pursuit</Company>
+    <Product>Measure.Win</Product>
+    <Copyright>Copyright © Pursuit 2021</Copyright>
+    <Authors>Pursuit</Authors>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LibreHardwareMonitorLib\LibreHardwareMonitorLib.csproj" />
+    <ProjectReference Include="..\Measure.Common\Measure.Common.csproj" />
+  </ItemGroup>
+
+</Project>
