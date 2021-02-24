@@ -20,15 +20,13 @@ Todo:
 import os
 import subprocess
 import json
-import os
+from datetime import date
 
 
 
 
-def folder_creation():
-    today = str(date.today())
-    json_folder = "/home/martin/Desktop/deCo2me/deCo2me/"
-    json_file_path = json_folder + today + ".json"
+def folder_creation(json_file_path):
+    
     if not os.path.isfile(json_file_path):
         #period in seconds
         json_file = {
@@ -66,6 +64,7 @@ def fetch_rt_data_usage(date, network):
     OUTPUTS: a list with [received, sent ] all in Bytes
     """
 
+    """
     #***********With linux commands:
     command = ['vnstat', '-i', network, '-d']
     # run vnstat -i wlo1 -d to see what the value of p is
@@ -104,7 +103,28 @@ def fetch_rt_data_usage(date, network):
     except:
         net_data = [0.0, 0.0]
     # With call to cross platform method:
+    """
 
+    #*****************With Sami's code
+    
+
+    keyboard = Controller()
+    command = ['./NetMonTest']
+    # run vnstat -i wlo1 -d to see what the value of p is
+    p = subprocess.Popen(command, stdout=subprocess.PIPE)
+
+    keyboard.press('.')
+    keyboard.release('.')
+
+    bytes_data = p.stdout.read()
+
+    retcode = p.wait()
+
+
+    # retrieves data and transforms it
+    s=str(bytes_data,'utf-8')
+    a = s.split("\n")
+    received = ''.join(x for x in d if x.isalpha())
     return net_data
 
 
