@@ -1,2 +1,2 @@
 @echo off
-call .\Measure\build-mac.bat
+call %~dp0\Measure\build-mac.bat

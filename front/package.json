@@ -6,8 +6,9 @@
   "scripts": {
     "start": "electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "publish-linux": "electron-forge package --arch x64 --platform linux",
+    "publish-win": "electron-forge package --arch x64 --platform win32",
+    "publish-mac": "electron-forge package --arch x64 --platform darwin"
   },
   "keywords": [],
   "author": "Martin Piana, Rezel",

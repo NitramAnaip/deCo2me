@@ -1,3 +1,6 @@
 #!/bin/bash
+dir=$(dirname $(readlink /proc/$$/fd/255))
 
-dotnet publish $0/../Measure.Unix -c Release -o $0/../Measure.Unix/bin/Publish/Mac64 -f net5.0 -r osx-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true
+rm -rf $dir/Measure.Common/bin/Release
+rm -rf $dir/Measure.Unix/bin/Release
+dotnet publish $dir/Measure.Unix -c Release -o $dir/Measure.Unix/bin/Publish/Mac64 -f net5.0 -r osx-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true
