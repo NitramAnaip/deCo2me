@@ -2,21 +2,42 @@
 import time
 import json
 from datetime import date
+import subprocess
 
+from pynput.keyboard import Key, Controller
 from data_gatherer import get_pc_name, fetch_rt_data_usage, fetch_battery_cons, folder_creation
 
 
-
-print(time.time())
 
 period = 300
 
 
 
-def test() -> int:
-    return "patate"
+def test():
+    keyboard = Controller()
+    command = ['./NetMonTest']
+    # run vnstat -i wlo1 -d to see what the value of p is
+    p = subprocess.Popen(command, stdout=subprocess.PIPE)
+    print("here")
+    keyboard.press('.')
+    keyboard.release('.')
+
+    bytes_data = p.stdout.read()
 
 
+    
+    print("now")
+    retcode = p.wait()
+    print("dai")
+
+    # retrieves data and transforms it
+    s=str(bytes_data,'utf-8')
+    a = s.split("\n")
+    print(a)
+
+test()
+
+"""
 test()
 
 while True:
@@ -47,3 +68,4 @@ while True:
         json.dump(json_file, f)
 
     time.sleep(period)
+"""
