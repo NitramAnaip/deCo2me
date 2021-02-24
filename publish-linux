@@ -6,8 +6,7 @@ $dir/front/build-linux
 
 mkdir -p $dir/publish/linux
 
-cp -rf $dir/back/Measure/Measure.Unix/bin/Publish/*.exe $dir/publish/linux
-cp -rf $dir/back/Measure/Measure.Unix/bin/Publish/*.dll $dir/publish/linux
+cp -rf $dir/back/Measure/Measure.Unix/bin/Publish/Linux64/Measure.Unix $dir/publish/linux/
 
 cp -rf $dir/src/* $dir/publish/linux
 
@@ -15,4 +14,4 @@ cp -rf $dir/front/out/deco2me-linux-x64/* $dir/publish/linux
 
 cp -rf $dir/setup/linux/* $dir/publish/linux
 
-mv $dir/publish/linux/Measure.Unix.exe $dir/publish/linux/Measure.exe
+mv $dir/publish/linux/Measure.Unix $dir/publish/linux/Measure

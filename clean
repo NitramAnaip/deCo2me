@@ -1,0 +1,21 @@
+#!/bin/bash
+dir=$(dirname $(readlink /proc/$$/fd/255))
+
+rm -rf $dir/back/Measure/LibreHardwareMonitorLib/bin
+rm -rf $dir/back/Measure/LibreHardwareMonitorLib/obj
+
+rm -rf $dir/back/Measure/Measure.Common/bin
+rm -rf $dir/back/Measure/Measure.Common/obj
+
+rm -rf $dir/back/Measure/Measure.Unix/bin
+rm -rf $dir/back/Measure/Measure.Unix/obj
+
+rm -rf $dir/back/Measure/Measure.Win/bin
+rm -rf $dir/back/Measure/Measure.Win/obj
+
+rm -rf $dir/back/ServiceRunner/bin
+rm -rf $dir/back/ServiceRunner/obj
+
+rm -rf $dir/front/out
+
+rm -rf $dir/publish
