@@ -1,0 +1,22 @@
+#!/bin/bash
+dir=$(dirname $(readlink /proc/$$/fd/255))
+
+$dir/back/build-mac
+$dir/front/build-mac
+
+mkdir -p $dir/publish/mac
+
+cp -rf $dir/back/Measure/Measure.Unix/bin/Publish/*.exe $dir/publish/mac
+cp -rf $dir/back/Measure/Measure.Unix/bin/Publish/*.dll $dir/publish/mac
+cp -rf $dir/back/Measure/Measure.Unix/bin/Publish/*.sys $dir/publish/mac
+
+cp -rf $dir/back/ServiceRunner/bin/Publish/*.exe $dir/publish/mac
+cp -rf $dir/back/ServiceRunner/bin/Publish/*.dll $dir/publish/mac
+
+cp -rf $dir/src/* $dir/publish/mac
+
+cp -rf $dir/front/out/deco2me-darwin-x64/* $dir/publish/mac
+
+cp -rf $dir/setup/mac/* $dir/publish/mac
+
+mv $dir/publish/mac/Measure.Unix.exe $dir/publish/mac/Measure.exe

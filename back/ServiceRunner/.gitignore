@@ -1,0 +1,6 @@
+# Including pre-compiled exe and dll files
+
+!bin
+bin/Debug
+bin/Release
+bin/Publish/*.pdb

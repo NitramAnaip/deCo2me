@@ -12,8 +12,8 @@ To install and run the application, one needs to:
 - Install the application's dependencies with npm: `npm install`
 - Run the application with npm: `npm start`
 
-## Build
+## Publishing
 
-To build the app, simply use npm with `npm run make`.
+To build and publish the app, simply use npm with `npm run publish-platform` where `platform` is either `win`, `linux` or `mac`
 
 To package the app without creating an installer on Windows, use `npm run package`

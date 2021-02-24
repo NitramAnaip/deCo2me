@@ -3,3 +3,6 @@ node_modules/
 
 # Front build
 /front/out/
+
+# Publish output
+/publish

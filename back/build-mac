@@ -1,0 +1,4 @@
+#!/bin/bash
+dir=$(dirname $(readlink /proc/$$/fd/255))
+
+$dir/Measure/build-mac
