@@ -21,6 +21,15 @@ namespace Measure.Common
 			Console.WriteLine(Environment.MachineName);
 		}
 
+		public static void OutputNetInterfaces()
+		{
+			foreach(NetworkInterface net in NetworkInterface.GetAllNetworkInterfaces())
+			{
+				IPInterfaceStatistics netStat = net.GetIPStatistics();
+				Console.WriteLine($"{net.Name} - {net.NetworkInterfaceType} - {netStat.BytesSent} - {netStat.BytesReceived}");
+			}
+		}
+
 		public static void OutputNetworkWiredUpDown()
 		{
 			long up = 0;
