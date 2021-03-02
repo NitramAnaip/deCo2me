@@ -20,6 +20,8 @@ namespace Measure.Win
 				Helper.OutputNetworkWiredUpDown();
 			else if(command == "netwireless")
 				Helper.OutputNetworkWirelessUpDown();
+			else if(command == "neti")
+				Helper.OutputNetInterfaces();
 			else if(command == "model")
 				OutputComputerModel();
 			else if(command == "power")

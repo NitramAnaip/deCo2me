@@ -27,7 +27,15 @@
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "ignore": [
+          "^(\/data$)",
+          "^(\/build-)",
+          "^(\/README.md$)",
+          "^(\/testDataGen.js$)",
+          ".gitignore"
+        ]
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",

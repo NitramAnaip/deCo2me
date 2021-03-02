@@ -14,6 +14,8 @@ namespace Measure.Unix
 				Helper.OutputNetworkWiredUpDown();
 			else if(command == "netwireless")
 				Helper.OutputNetworkWirelessUpDown();
+			else if(command == "neti")
+				Helper.OutputNetInterfaces();
 			else Helper.OutputUnknownCommand();
 		}
 	}
