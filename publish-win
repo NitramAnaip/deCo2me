@@ -5,18 +5,20 @@ $dir/back/build-win
 $dir/front/build-win
 
 mkdir -p $dir/publish/windows
+mkdir -p $dir/publish/windows/back
+mkdir -p $dir/publish/windows/front
 
-cp -rf $dir/back/Measure/Measure.Win/bin/Publish/*.exe $dir/publish/windows
-cp -rf $dir/back/Measure/Measure.Win/bin/Publish/*.dll $dir/publish/windows
-cp -rf $dir/back/Measure/Measure.Win/bin/Publish/*.sys $dir/publish/windows
+cp -rf $dir/back/Measure/Measure.Win/bin/Publish/*.exe $dir/publish/windows/back
+cp -rf $dir/back/Measure/Measure.Win/bin/Publish/*.dll $dir/publish/windows/back
+cp -rf $dir/back/Measure/Measure.Win/bin/Publish/*.sys $dir/publish/windows/back
 
-cp -rf $dir/back/ServiceRunner/bin/Publish/*.exe $dir/publish/windows
-cp -rf $dir/back/ServiceRunner/bin/Publish/*.dll $dir/publish/windows
+cp -rf $dir/back/ServiceRunner/bin/Publish/*.exe $dir/publish/windows/back
+cp -rf $dir/back/ServiceRunner/bin/Publish/*.dll $dir/publish/windows/back
 
-cp -rf $dir/src/* $dir/publish/windows
+cp -rf $dir/src/* $dir/publish/windows/back
 
-cp -rf $dir/front/out/deco2me-win32-x64/* $dir/publish/windows
+cp -rf $dir/front/out/deco2me-win32-x64/* $dir/publish/windows/front
 
 cp -rf $dir/setup/windows/* $dir/publish/windows
 
-mv $dir/publish/windows/Measure.Win.exe $dir/publish/windows/Measure.exe
+mv $dir/publish/windows/back/Measure.Win.exe $dir/publish/windows/back/Measure.exe

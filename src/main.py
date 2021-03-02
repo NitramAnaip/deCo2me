@@ -2,6 +2,7 @@
 import time
 import json
 from datetime import date
+import os
 import subprocess
 
 #from pynput.keyboard import Key, Controller
@@ -9,7 +10,14 @@ from data_gatherer import get_pc_name, fetch_rt_data_usage, fetch_battery_cons, 
 
 product, manufacturer = get_pc_name()
 
-json_folder = "/usr/bin/deCo2me/front/data/"
+# Ensure the working directory is the script's directory
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+json_folder = "./../front/data/"
+
+if(not os.path.exists(json_folder)):
+    os.makedirs(json_folder)
+
 global_json_path = json_folder + "global.json"
 global_json = {
     "computerManufacturer": manufacturer,

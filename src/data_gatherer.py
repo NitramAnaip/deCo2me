@@ -18,6 +18,7 @@ Todo:
 """
 
 import os
+import platform
 import subprocess
 import json
 from datetime import date
@@ -63,7 +64,7 @@ def sub(command1, command2, command3='', command4='', command5=''):
     bytes_data = p.stdout.read()
 
     retcode = p.wait()
-    return bytes_data
+    return str(bytes_data,'utf-8').replace('\r', '') #Convert CRLF to LF. Useful so that the rest of the code doesn't need to handle CRLF, which seems to be Windows specific
 
 
 def fetch_rt_data_usage(date, wired):
@@ -117,16 +118,14 @@ def fetch_rt_data_usage(date, wired):
     """
 
     #*****************With Sami's code
-    #small mixup in the Binary files so wireless actually corresponds to wired
     if wired:
-        bytes_data = sub('./usr/bin/deCo2me/back/NetMeasure', 'netwireless')
+        s = sub('./Measure', 'netWired')
 
     else: 
-        bytes_data = sub('./usr/bin/deCo2me/back/NetMeasure', 'netwired')
+        s = sub('./Measure', 'netWireless')
 
 
     # retrieves data and transforms it
-    s=str(bytes_data,'utf-8')
     a = s.split("\n")
     a.remove('')
     received = ''.join(x for x in a[1] if not x.isalpha())
@@ -141,6 +140,9 @@ def fetch_rt_data_usage(date, wired):
 
 
 def fetch_hourly_data_usage(network):
+    if(platform.system() != 'Linux'):
+        raise Exception("This function can only be called from Linux")
+
     """
     ARGS: the network we're using
     Output: a dictionary of the form {"22": 157, ....} the key is the hour and the value is the quantity of data consumed
@@ -177,6 +179,8 @@ def fetch_hourly_data_usage(network):
 
 
 def fetch_daily_data_usage(network):
+    if(platform.system() != 'Linux'):
+        raise Exception("This function can only be called from Linux")
     """
     oututs a dictionary with dates as keys and the consumption per day in bytes as values
     """
@@ -210,52 +214,67 @@ def fetch_daily_data_usage(network):
 
 
 def fetch_battery_cons():
-    """
-    Returns the Wh consumption (refreshed every 120s) due to terminal consumption
-    """
-    #refreshed every 120s
-    command = ['upower', '-i', '/org/freedesktop/UPower/devices/battery_BAT0']
-    p = subprocess.Popen(command, stdout=subprocess.PIPE)
-    bytes_data = p.stdout.read()
-    retcode = p.wait()
+    if(platform.system() == 'Linux'):
+        """
+        Returns the Wh consumption (refreshed every 120s) due to terminal consumption
+        """
+        #refreshed every 120s
+        command = ['upower', '-i', '/org/freedesktop/UPower/devices/battery_BAT0']
+        p = subprocess.Popen(command, stdout=subprocess.PIPE)
+        bytes_data = p.stdout.read()
+        retcode = p.wait()
 
-    # retrieves data and transforms it
-    s=str(bytes_data,'utf-8')
-    a=s.split("\n")
-    interesting = ""
-    for i in range (len(a)):
-        if "energy-rate" in a[i]:
-            interesting = a[i]
-    #print(interesting)
-    interesting = interesting.replace("energy-rate:", "")
-    interesting = interesting.replace("W", "")
-    interesting = interesting.replace(",", ".")
-    power = float(interesting)
+        # retrieves data and transforms it
+        s=str(bytes_data,'utf-8')
+        a=s.split("\n")
+        interesting = ""
+        for i in range (len(a)):
+            if "energy-rate" in a[i]:
+                interesting = a[i]
+        #print(interesting)
+        interesting = interesting.replace("energy-rate:", "")
+        interesting = interesting.replace("W", "")
+        interesting = interesting.replace(",", ".")
+        power = float(interesting)
 
-    return power * (1/30) * 10e-3
+        return power * (1/30) * 10e-3
+    elif(platform.system() == 'Windows'):
+        return float(sub('./Measure', 'power'))
+    else:
+        raise Exception("Unsupported OS")
 
 
 
 def get_pc_name():
-    """
-    returns product name and the manufacturer
-    """
+    if(platform.system() == 'Linux'):
+        """
+        returns product name and the manufacturer
+        """
 
-    bytes_data = sub('sudo', 'dmidecode', '|', 'grep', '"Product Name"')
+        s = sub('sudo', 'dmidecode', '|', 'grep', '"Product Name"')
 
-    # retrieves data and transforms it
-    s=str(bytes_data,'utf-8')
-    start_product = s.find("Product Name:")
-    end_product = start_product + s[start_product:].find("by")
-    product = s[start_product:end_product]
-    product = product.replace("Product Name: ", "")
+        # retrieves data and transforms it
+        start_product = s.find("Product Name:")
+        end_product = start_product + s[start_product:].find("by")
+        product = s[start_product:end_product]
+        product = product.replace("Product Name: ", "")
 
-    start_manufacturer = s.find("Manufacturer: ")
-    end_manufacturer = start_manufacturer + s[start_manufacturer:].find("\n")
-    manufacturer = s[start_manufacturer:end_manufacturer]
-    manufacturer = manufacturer.replace("Manufacturer: ", "")
+        start_manufacturer = s.find("Manufacturer: ")
+        end_manufacturer = start_manufacturer + s[start_manufacturer:].find("\n")
+        manufacturer = s[start_manufacturer:end_manufacturer]
+        manufacturer = manufacturer.replace("Manufacturer: ", "")
 
-    return product, manufacturer
+        return product, manufacturer
+    elif(platform.system() == 'Windows'):
+        s = sub('./Measure', 'model')
+        a = s.split("\n")
+        a.remove('')
+        manufacturer = a[0]
+        product = a[1]
+
+        return product, manufacturer
+    else:
+        raise Exception("Unsupported OS")
 
 
 
