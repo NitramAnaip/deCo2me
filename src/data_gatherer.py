@@ -21,6 +21,7 @@ import os
 import subprocess
 import json
 from datetime import date
+#from pynput.keyboard import Key, Controller
 
 
 
@@ -55,7 +56,17 @@ network = {"wired": 4.29*10e-11, "wifi": 1.52*10e-11, "mobile": 8.84*10e-11} #kw
 energetic_mix = {"France": 80,"USA":350} #g of Co2 per Kwh
 
 
-def fetch_rt_data_usage(date, network):
+def sub(command1, command2, command3='', command4='', command5=''):
+    command = [command1, command2, command3, command4, command5]
+    p = subprocess.Popen(command, stdout=subprocess.PIPE)
+
+    bytes_data = p.stdout.read()
+
+    retcode = p.wait()
+    return bytes_data
+
+
+def fetch_rt_data_usage(date, wired):
     """
     ARGS: date must be entered as a float of format "2012-12-21", 
     network is the network interface we are focusing on. In my case its wlo1 but it depends whether its (wifi/network) or ethernet
@@ -106,26 +117,24 @@ def fetch_rt_data_usage(date, network):
     """
 
     #*****************With Sami's code
-    
+    #small mixup in the Binary files so wireless actually corresponds to wired
+    if wired:
+        bytes_data = sub('./usr/bin/deCo2me/back/NetMeasure', 'netwireless')
 
-    keyboard = Controller()
-    command = ['./NetMonTest']
-    # run vnstat -i wlo1 -d to see what the value of p is
-    p = subprocess.Popen(command, stdout=subprocess.PIPE)
-
-    keyboard.press('.')
-    keyboard.release('.')
-
-    bytes_data = p.stdout.read()
-
-    retcode = p.wait()
+    else: 
+        bytes_data = sub('./usr/bin/deCo2me/back/NetMeasure', 'netwired')
 
 
     # retrieves data and transforms it
     s=str(bytes_data,'utf-8')
     a = s.split("\n")
-    received = ''.join(x for x in d if x.isalpha())
+    a.remove('')
+    received = ''.join(x for x in a[1] if not x.isalpha())
+    sent = ''.join(x for x in a[0] if not x.isalpha())
+
+    net_data = [received, sent]
     return net_data
+
 
 
 
@@ -231,10 +240,8 @@ def get_pc_name():
     """
     returns product name and the manufacturer
     """
-    command = ['sudo', 'dmidecode', '|', 'grep', '"Product Name"']
-    p = subprocess.Popen(command, stdout=subprocess.PIPE)
-    bytes_data = p.stdout.read()
-    retcode = p.wait()
+
+    bytes_data = sub('sudo', 'dmidecode', '|', 'grep', '"Product Name"')
 
     # retrieves data and transforms it
     s=str(bytes_data,'utf-8')
@@ -247,7 +254,6 @@ def get_pc_name():
     end_manufacturer = start_manufacturer + s[start_manufacturer:].find("\n")
     manufacturer = s[start_manufacturer:end_manufacturer]
     manufacturer = manufacturer.replace("Manufacturer: ", "")
-    print(product, manufacturer)
 
     return product, manufacturer
 

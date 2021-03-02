@@ -4,14 +4,25 @@ import json
 from datetime import date
 import subprocess
 
-from pynput.keyboard import Key, Controller
+#from pynput.keyboard import Key, Controller
 from data_gatherer import get_pc_name, fetch_rt_data_usage, fetch_battery_cons, folder_creation
 
+product, manufacturer = get_pc_name()
+
+json_folder = "/usr/bin/deCo2me/front/data/"
+global_json_path = json_folder + "global.json"
+global_json = {
+    "computerManufacturer": manufacturer,
+    "computerModel": product
+}
+
+with open (global_json_path, "w+") as f:
+    json.dump(global_json, f)
 
 
-period = 300
+period = 10
 
-
+"""
 
 def test():
     keyboard = Controller()
@@ -35,14 +46,16 @@ def test():
     a = s.split("\n")
     print(a)
 
-test()
 
-"""
 test()
+"""
+
+
+
 
 while True:
     today = str(date.today())
-    json_folder = "/home/martin/Desktop/deCo2me/deCo2me/"
+    
     json_file_path = json_folder + today + ".json"
 
     folder_creation(json_file_path)# If someone leaves the computer on during the night we still need the program to create a new file as 
@@ -52,8 +65,14 @@ while True:
 
     json_file["timestamps"].append(int(time.time()))
 
-    net_wired = fetch_rt_data_usage(str(today), "eno1")
-    net_wireless = fetch_rt_data_usage(str(today), "wlo1")
+    net_wired = fetch_rt_data_usage(str(today), True)
+    net_wireless = fetch_rt_data_usage(str(today), False)
+    time.sleep(period)
+    next_wired = fetch_rt_data_usage(str(today), True)
+    next_wireless = fetch_rt_data_usage(str(today), False)
+    for i in range (2):
+        net_wired[i] = float(next_wired[i]) - float(net_wired[i])
+        net_wireless[i] = float(next_wireless[i]) - float(net_wireless[i])
     json_file["netUpWired"].append(net_wired[1])
     json_file["netDownWired"].append(net_wired[0])
     json_file["netUpWireless"].append(net_wireless[1])
@@ -67,5 +86,16 @@ while True:
     with open (json_file_path, "w") as f:
         json.dump(json_file, f)
 
-    time.sleep(period)
-"""
+    
+
+
+
+
+
+
+
+
+
+
+
+
