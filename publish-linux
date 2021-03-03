@@ -16,9 +16,12 @@ cp -rf $dir/src/* $dir/publish/linux/deCo2me/back/
 
 cp -rf $dir/front/out/deco2me-linux-x64/* $dir/publish/linux/deCo2me/front
 
-cp -rf $dir/setup/linux/* $dir/publish/linux/deCo2me/
+cp -rf $dir/setup/linux/installer.sh $dir/publish/linux/deCo2me/
+cp -rf $dir/setup/linux/uninstaller.sh $dir/publish/linux/deCo2me/
+cp -rf $dir/setup/linux/starter.sh $dir/publish/linux/deCo2me/front/resources/app
 
 
 cp -rf $dir/logo.jpeg $dir/publish/linux/deCo2me/front
 
 mv $dir/publish/linux/Measure.Unix $dir/publish/linux/deCo2me/back/Measure
+

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#install dependancies needed by electron
-sudo apt install npm
 
 # this supposes the files I'm talking about are in the in the same directory as the bash
 sudo touch /lib/systemd/system/deCo2me.service
