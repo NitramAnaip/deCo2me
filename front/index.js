@@ -1,4 +1,5 @@
-let fs = require('fs');
+const fs = require('fs');
+const electron = require('electron')
 
 let appVersion = "0.1.0"
 let linePeriod = 60 * 60; //In seconds
@@ -41,15 +42,17 @@ function initInterface()
   addToPage(overview, "power-card");
   addToPage(overview, "co2-card");
   addToPage(overview, "source-card");
-  addToPage(overview, "computer-card")
+  addToPage(overview, "computer-card");
   
-  addToPage(electrical, "electrical-power-card")
-  addToPage(electrical, "energy-card")
-  addToPage(electrical, "electrical-co2-card")
+  addToPage(electrical, "electrical-power-card");
+  addToPage(electrical, "energy-card");
+  addToPage(electrical, "electrical-co2-card");
 
-  addToPage(internet, "network-card")
-  addToPage(internet, "data-card")
-  addToPage(internet, "internet-co2-card")
+  addToPage(internet, "network-card");
+  addToPage(internet, "data-card");
+  addToPage(internet, "internet-co2-card");
+
+  addWebLink("report", "https://github.com/NitramAnaip/deCo2me/issues/new");
 
   setActivePage(overview);
 }
@@ -669,4 +672,19 @@ function getTime(day, hours, minutes, seconds)
   date.setMilliseconds(0);
 
   return date;
+}
+
+
+/** Web Links **/
+
+function addWebLink(linkId, url)
+{
+  let link = $(`#${linkId}`).get(0);
+  link.onclick = () => onWebLinkClick(link, url);
+}
+
+function onWebLinkClick(link, url)
+{
+  electron.shell.openExternal(url)
+  link.blur();
 }

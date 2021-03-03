@@ -28,6 +28,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
+        "icon": "icon.ico",
         "ignore": [
           "^(\/data$)",
           "^(\/build-)",
