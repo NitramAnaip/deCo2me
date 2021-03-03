@@ -68,7 +68,7 @@ function initStaticComponents()
   });
   calendar.on("change.datetimepicker", onDateChanged);
 
-  fs.readFile(`./data/global.json`, 'utf8' , (err, data) => {
+  fs.readFile(`./../../data/global.json`, 'utf8' , (err, data) => {
     let computerInfo = "Unknown";
 
     if (err)
@@ -368,7 +368,7 @@ function selectDay(date)
 {
   activeDay = date;
 
-  fs.readFile(`./data/${formatDate(date)}.json`, 'utf8' , (err, data) => {
+  fs.readFile(`./../../data/${formatDate(date)}.json`, 'utf8' , (err, data) => {
     if (err)
     {
       console.error(`Unable to read JSON file: ${err}`);
@@ -382,7 +382,7 @@ function selectDay(date)
       }
       catch(error)
       {
-        console.error(`Unable to parse JSON file: ./data/${formatDate(date)}.json\n${error}`);
+        console.error(`Unable to parse JSON file: ./../../data/${formatDate(date)}.json\n${error}`);
         dayData = null;
       }
     }

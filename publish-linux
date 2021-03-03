@@ -2,16 +2,23 @@
 dir=$(dirname $(readlink /proc/$$/fd/255))
 
 $dir/back/build-linux
-$dir/front/build-linux
+sudo chmod 744 $dir/front/build-linux
+sudo $dir/front/build-linux
 
-mkdir -p $dir/publish/linux
+mkdir -p $dir/publish/linux/deCo2me/
+mkdir -p $dir/publish/linux/deCo2me/back/
+mkdir -p $dir/publish/linux/deCo2me/front/
+mkdir -p $dir/publish/linux/deCo2me/front/data/
 
 cp -rf $dir/back/Measure/Measure.Unix/bin/Publish/Linux64/Measure.Unix $dir/publish/linux/
 
-cp -rf $dir/src/* $dir/publish/linux
+cp -rf $dir/src/* $dir/publish/linux/deCo2me/back/
 
-cp -rf $dir/front/out/deco2me-linux-x64/* $dir/publish/linux
+cp -rf $dir/front/out/deco2me-linux-x64/* $dir/publish/linux/deCo2me/front
 
-cp -rf $dir/setup/linux/* $dir/publish/linux
+cp -rf $dir/setup/linux/* $dir/publish/linux/deCo2me/
 
-mv $dir/publish/linux/Measure.Unix $dir/publish/linux/Measure
+
+cp -rf $dir/logo.jpeg $dir/publish/linux/deCo2me/front
+
+mv $dir/publish/linux/Measure.Unix $dir/publish/linux/deCo2me/back/Measure

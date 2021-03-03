@@ -28,35 +28,8 @@ with open (global_json_path, "w+") as f:
     json.dump(global_json, f)
 
 
-period = 10
+period = 60
 
-"""
-
-def test():
-    keyboard = Controller()
-    command = ['./NetMonTest']
-    # run vnstat -i wlo1 -d to see what the value of p is
-    p = subprocess.Popen(command, stdout=subprocess.PIPE)
-    print("here")
-    keyboard.press('.')
-    keyboard.release('.')
-
-    bytes_data = p.stdout.read()
-
-
-    
-    print("now")
-    retcode = p.wait()
-    print("dai")
-
-    # retrieves data and transforms it
-    s=str(bytes_data,'utf-8')
-    a = s.split("\n")
-    print(a)
-
-
-test()
-"""
 
 
 

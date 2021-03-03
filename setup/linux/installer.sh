@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#install dependancies needed by electron
+sudo apt install npm
+
 # this supposes the files I'm talking about are in the in the same directory as the bash
 sudo touch /lib/systemd/system/deCo2me.service
 sudo chmod 666 /lib/systemd/system/deCo2me.service
@@ -20,8 +23,7 @@ WantedBy=multi-user.target
 sudo systemctl daemon-reload
 sudo systemctl enable deCo2me.service
 
-#The permission on the unit file needs to be set to 644 :
-sudo chmod 644 /lib/systemd/system/deCo2me.service
+
 
 sudo mv deCo2me /usr/bin/
 
@@ -35,11 +37,13 @@ Version=1.0
 Name=deCo2me
 Comment=Monitors eqCo2
 Keywords=monitor;
-Exec=gnome-terminal -e \"bash -c '. /usr/bin/deCo2me/front/starter.sh;$SHELL'\"
-Icon=/usr/bin/deCo2me/front/logo.png
+Exec=gnome-terminal -e \"bash -c '. /usr/bin/deCo2me/front/resources/app/starter.sh;$SHELL'\"
+Icon=/usr/bin/deCo2me/front/logo.jpeg
 Terminal=true
 Type=Application
 StartupNotify=true
 " > /usr/share/applications/deCo2me.desktop
 
-sudo chmod 644 /usr/share/applications/deCo2me.desktop
+
+#The permission on the unit file needs to be set to 644 :
+sudo chmod 644 /lib/systemd/system/deCo2me.service
