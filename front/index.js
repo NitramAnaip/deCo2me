@@ -1,7 +1,9 @@
 const fs = require('fs');
-const electron = require('electron')
+const electron = require('electron');
 
-let appVersion = "0.1.0"
+const appVersion = "0.1.0";
+const dataDir = "./data";
+
 let linePeriod = 60 * 60; //In seconds
 let barPeriod = 3 * 60 * 60; //In seconds
 let netWiredEnergy = 4.29*10e-11; //kWh per byte
@@ -71,7 +73,7 @@ function initStaticComponents()
   });
   calendar.on("change.datetimepicker", onDateChanged);
 
-  fs.readFile(`./../../data/global.json`, 'utf8' , (err, data) => {
+  fs.readFile(`${dataDir}/global.json`, 'utf8' , (err, data) => {
     let computerInfo = "Unknown";
 
     if (err)
@@ -371,7 +373,7 @@ function selectDay(date)
 {
   activeDay = date;
 
-  fs.readFile(`./../../data/${formatDate(date)}.json`, 'utf8' , (err, data) => {
+  fs.readFile(`${dataDir}/${formatDate(date)}.json`, 'utf8' , (err, data) => {
     if (err)
     {
       console.error(`Unable to read JSON file: ${err}`);
@@ -385,7 +387,7 @@ function selectDay(date)
       }
       catch(error)
       {
-        console.error(`Unable to parse JSON file: ./../../data/${formatDate(date)}.json\n${error}`);
+        console.error(`Unable to parse JSON file: ${dataDir}/${formatDate(date)}.json\n${error}`);
         dayData = null;
       }
     }
