@@ -11,9 +11,6 @@ Maybe worth putting a little note when downloading software: "Careful, must wait
 Todo:
  - Gather datasetfor computers manufacturing and electricity co2 cost
  - code same thing for mac and windows. Be careful to have same output from the code whatever the os
- - get an interface (not too ugly). That also means name and logo. Who could do the interface?????
- - see if I can have it running in background on ubuntu so that it updats constantly
- - Contact mad and see if they know someone who'd know how to make a interface graphique
 
 """
 
@@ -22,7 +19,6 @@ import platform
 import subprocess
 import json
 from datetime import date
-#from pynput.keyboard import Key, Controller
 
 
 
@@ -117,7 +113,7 @@ def fetch_rt_data_usage(date, wired):
     # With call to cross platform method:
     """
 
-    #*****************With Sami's code
+    #***************** Calling on Sami's programs
     if wired:
         s = sub('./Measure', 'netWired')
 
@@ -237,7 +233,7 @@ def fetch_battery_cons():
         interesting = interesting.replace(",", ".")
         power = float(interesting)
 
-        return power * (1/30) * 10e-3
+        return power 
     elif(platform.system() == 'Windows'):
         return float(sub('./Measure', 'power'))
     else:
