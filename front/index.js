@@ -1,7 +1,7 @@
 const fs = require('fs');
 const electron = require('electron');
 
-const appVersion = "0.1.0";
+const appVersion = "1.0.0";
 const dataDir = "./data";
 
 let linePeriod = 60 * 60; //In seconds

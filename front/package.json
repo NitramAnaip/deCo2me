@@ -1,6 +1,6 @@
 {
   "name": "deco2me",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "CO2-equivalent consumption monitor",
   "main": "main.js",
   "scripts": {
