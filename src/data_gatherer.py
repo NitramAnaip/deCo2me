@@ -210,8 +210,6 @@ def fetch_daily_data_usage(network):
 
 
 def fetch_battery_cons():
-    if(platform.system() == 'Darwin'):
-        return 0
     if(platform.system() == 'Linux'):
         """
         Returns the Wh consumption (refreshed every 120s) due to terminal consumption
@@ -239,7 +237,8 @@ def fetch_battery_cons():
     elif(platform.system() == 'Windows'):
         return float(sub('./Measure', 'power'))
     else:
-        raise Exception("Unsupported OS")
+        return 0#raise Exception("Unsupported OS")
+
 
 
 
