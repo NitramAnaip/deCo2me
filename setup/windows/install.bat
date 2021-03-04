@@ -14,11 +14,12 @@ if %errorLevel% == 0 (
     echo Installing %APPNAME%...
 
     echo Installing service...
-    sc create %APPNAME% binpath="%~dp0\%SVC_NAME%" start=auto
+    sc create %APPNAME% binpath="%~dp0\back\%SVC_NAME%" start=auto
     sc start %APPNAME%
 
-    echo Creating shortcut...
-    powershell "$s=(New-Object -COM WScript.Shell).CreateShortcut('%USERPROFILE%\Desktop\%APPNAME%.lnk');$s.TargetPath='%~dp0\%EXE_NAME%';$s.WorkingDirectory='%~dp0';$s.Save()"
+    echo Creating shortcuts...
+    powershell "$s=(New-Object -COM WScript.Shell).CreateShortcut('%USERPROFILE%\Desktop\%APPNAME%.lnk');$s.TargetPath='%~dp0\front\%EXE_NAME%';$s.WorkingDirectory='%~dp0\front';$s.Save()"
+    powershell "$s=(New-Object -COM WScript.Shell).CreateShortcut('C:\ProgramData\Microsoft\Windows\Start Menu\Programs\%APPNAME%.lnk');$s.TargetPath='%~dp0\front\%EXE_NAME%';$s.WorkingDirectory='%~dp0\front';$s.Save()"
 
     echo %APPNAME% installed successfully !
 ) else (

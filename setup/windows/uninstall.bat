@@ -17,8 +17,9 @@ if %errorLevel% == 0 (
     sc stop %APPNAME%
     sc delete %APPNAME%
 
-    echo Deleting shortcut...
+    echo Deleting shortcuts...
     del "%USERPROFILE%\Desktop\%APPNAME%.lnk"
+    del "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\%APPNAME%.lnk"
 
     echo %APPNAME% uninstalled successfully.
 ) else (

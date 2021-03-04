@@ -14,6 +14,7 @@ cp -rf $dir/back/Measure/Measure.Win/bin/Publish/*.sys $dir/publish/windows/back
 
 cp -rf $dir/back/ServiceRunner/bin/Publish/*.exe $dir/publish/windows/back
 cp -rf $dir/back/ServiceRunner/bin/Publish/*.dll $dir/publish/windows/back
+cp -rf $dir/back/ServiceRunner/bin/Publish/*.cmd $dir/publish/windows/back
 
 cp -rf $dir/src/* $dir/publish/windows/back
 

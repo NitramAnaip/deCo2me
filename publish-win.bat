@@ -12,6 +12,7 @@ xcopy /S /Q /Y %~dp0\back\Measure\Measure.Win\bin\Publish\*.sys %~dp0\publish\wi
 
 xcopy /S /Q /Y %~dp0\back\ServiceRunner\bin\Publish\*.exe %~dp0\publish\windows\back
 xcopy /S /Q /Y %~dp0\back\ServiceRunner\bin\Publish\*.dll %~dp0\publish\windows\back
+xcopy /S /Q /Y %~dp0\back\ServiceRunner\bin\Publish\*.cmd %~dp0\publish\windows\back
 
 xcopy /S /Q /Y %~dp0\src\* %~dp0\publish\windows\back
 
