@@ -25,3 +25,5 @@ cp -rf $dir/logo.jpeg $dir/publish/linux/deCo2me/front
 
 mv $dir/publish/linux/Measure.Unix $dir/publish/linux/deCo2me/back/Measure
 
+#"bash -c '. npm_install.sh;$SHELL'\"
+
