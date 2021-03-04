@@ -111,7 +111,7 @@ function updatePowerGraph(data)
 
   if(dayData != null)
   {
-    let newData = resampleData([dayData.power, dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, [true, false, false, false, false]);
+    let newData = resampleData([dayData.power, dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, ["mean", "sum", "sum", "sum", "sum"]);
     power = newData[0];
 
     for(let i = 0; i < newData[0].length; i++)
@@ -137,11 +137,11 @@ function updateCo2Graph(data)
 
   if(dayData != null)
   {
-    let newData = resampleData([dayData.power, dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, [true, false, false, false, false]);
-  
+    let newData = resampleData([dayData.power, dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, ["int", "sum", "sum", "sum", "sum"]);
+
     for(let i = 0; i < newData[0].length; i++)
     {
-      powerCo2.push(newData[0][i] / 1000 * (period / 3600) * co2PerEnergy); //in g
+      powerCo2.push(newData[0][i] / 1000 / 3600 * co2PerEnergy); //in g
       downPowerCo2.push((newData[1][i] * netWiredEnergy + newData[2][i] * netWirelessEnergy) * co2PerEnergy); //in g
       upPowerCo2.push((newData[3][i] * netWiredEnergy + newData[4][i] * netWirelessEnergy) * co2PerEnergy); //in g
     }
@@ -158,15 +158,21 @@ function updateSourceGraph(data)
 
   if(dayData != null)
   {
-    let averagePeriod = dayData.timestamps.length >= 2 ? (dayData.timestamps[dayData.timestamps.length - 1] - dayData.timestamps[0]) / (dayData.timestamps.length - 1) : undefined; //in s
+    let lastTime = null;
+    let lastValue = null;
 
     gData = [0, 0, 0];
   
     for(let i = 0; i < dayData.power.length; i++)
     {
-      gData[0] += dayData.power[i] / 1000 * (averagePeriod / 3600) * co2PerEnergy; //in g
+      if(lastValue != null)
+        gData[0] += lastValue / 1000 * ((dayData.timestamps[i] - lastTime) / 3600) * co2PerEnergy; //in g
+      lastTime = dayData.timestamps[i];
+      lastValue = dayData.power[i];
+      
       gData[1] += (dayData.netDownWired[i] * netWiredEnergy + dayData.netDownWireless[i] * netWirelessEnergy) * co2PerEnergy; //in g
       gData[2] += (dayData.netUpWired[i] * netWiredEnergy + dayData.netUpWireless[i] * netWirelessEnergy) * co2PerEnergy; //in g
+    
     }
   }
 
@@ -181,7 +187,7 @@ function updateElectricalPowerGraph(data)
   data.labels = getTimeLabels(period);
 
   if(dayData != null)
-    power = resampleData([dayData.power], period, [true])[0];
+    power = resampleData([dayData.power], period, ["mean"])[0];
 
   data.datasets[0].data = power;
 }
@@ -195,10 +201,10 @@ function updateEnergyGraph(data)
 
   if(dayData != null)
   {
-    let newData = resampleData([dayData.power], period, [true])[0];
+    let newData = resampleData([dayData.power], period, ["int"])[0];
 
     for(let i = 0; i < newData.length; i++)
-      energy.push(newData[i] * (period / 3600)); //in wH
+      energy.push(newData[i] / 3600); //in wH
   }
 
   data.datasets[0].data = energy;
@@ -213,10 +219,10 @@ function updateElectricalCo2Graph(data)
 
   if(dayData != null)
   {
-    let newData = resampleData([dayData.power], period, [true])[0];
+    let newData = resampleData([dayData.power], period, ["int"])[0];
   
     for(let i = 0; i < newData.length; i++)
-      powerCo2.push(newData[i] / 1000 * (period / 3600) * co2PerEnergy); //in g
+      powerCo2.push(newData[i] / 1000 / 3600 * co2PerEnergy); //in g
   }
 
   data.datasets[0].data = powerCo2;
@@ -232,7 +238,7 @@ function updateNetworkGraph(data)
 
   if(dayData != null)
   {
-    let newData = resampleData([dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, [false, false, false, false]);
+    let newData = resampleData([dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, ["sum", "sum", "sum", "sum"]);
     power = newData[0];
 
     for(let i = 0; i < newData[0].length; i++)
@@ -256,7 +262,7 @@ function updateDataGraph(data)
 
   if(dayData != null)
   {
-    let newData = resampleData([dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, [false, false, false, false]);
+    let newData = resampleData([dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, ["sum", "sum", "sum", "sum"]);
     power = newData[0];
 
     for(let i = 0; i < newData[0].length; i++)
@@ -280,7 +286,7 @@ function updateInternetCo2Graph(data)
 
   if(dayData != null)
   {
-    let newData = resampleData([dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, [false, false, false, false]);
+    let newData = resampleData([dayData.netDownWired, dayData.netDownWireless, dayData.netUpWired, dayData.netUpWireless], period, ["sum", "sum", "sum", "sum"]);
   
     for(let i = 0; i < newData[0].length; i++)
     {
@@ -293,17 +299,27 @@ function updateInternetCo2Graph(data)
   data.datasets[1].data = upPowerCo2;
 }
 
-function resampleData(data, period, mean)
+/*
+ * Resample the input data using a given method
+ * Supported methods:
+ *   - sum  - Sums all points within each time periods 
+ *   - mean - Calculate the mean of all points within each time periods
+ *   - int  - Calculate the integral of the function associated with all points within each time period
+ */
+function resampleData(data, period, method)
 {
   let nextPoint = getTime(activeDay, 0, 0, 0);
   let newData = [];
   let counter = [];
   let measureCount = 0;
+  let lastTime = null;
+  let lastValue = [];
 
   for(let j = 0; j < data.length; j++)
   {
     newData.push([]);
     counter.push(0);
+    lastValue.push(null);
   }
 
   nextPoint.setSeconds(nextPoint.getSeconds() + period);
@@ -315,15 +331,30 @@ function resampleData(data, period, mean)
     if(i < dayData.timestamps.length)
     {
       let measureDate = new Date(dayData.timestamps[i] * 1000);
-      console.log(measureDate.toTimeString() + " ; " + nextPoint.toTimeString());
 
       if(measureDate < nextPoint)
       {
         for(let j = 0; j < data.length; j++)
-          counter[j] += data[j][i]; //Adding the data measured within a time period
+        {          
+          if(method[j] == "int") //Calculating the integral of the data measured within a time period
+          {
+            if(lastValue[j] != null)
+              counter[j] += lastValue[j] * (dayData.timestamps[i] - lastTime);
+          }
+          else //Summing the data measured within a time period
+            counter[j] += data[j][i];
+          
+          lastValue[j] = data[j][i]
+        }
+
+        lastTime = dayData.timestamps[i];
         measureCount++;
       }
-      else addPoint = true;
+      else
+      {
+        i--; //Handling the current point later
+        addPoint = true;
+      }
     }
     else if(measureCount > 0) //Adding the remaining data after the iteration is finished
       addPoint = true;
@@ -332,7 +363,16 @@ function resampleData(data, period, mean)
     {
       for(let j = 0; j < data.length; j++)
       {
-        newData[j].push(measureCount > 0 ? (mean[j] ? counter[j] / measureCount : counter[j]) : undefined);
+        if(measureCount > 0)
+        {
+          if(method[j] == "mean")
+            newData[j].push(counter[j] / measureCount);
+          else
+            newData[j].push(counter[j]);
+        }
+        else
+          newData[j].push(undefined);
+
         counter[j] = 0;
       }
 
