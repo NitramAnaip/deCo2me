@@ -18,6 +18,7 @@ cp -rf $dir/front/out/deco2me-linux-x64/* $dir/publish/linux/deCo2me/front
 
 cp -rf $dir/setup/linux/installer.sh $dir/publish/linux/deCo2me/
 cp -rf $dir/setup/linux/uninstaller.sh $dir/publish/linux/deCo2me/
+cp -rf $dir/setup/linux/requirements.txt $dir/publish/linux/deCo2me/
 cp -rf $dir/setup/linux/starter.sh $dir/publish/linux/deCo2me/front/
 
 

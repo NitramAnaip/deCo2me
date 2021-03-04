@@ -22,7 +22,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable deCo2me.service
 
 
-
+pip3 install /deCo2me/requirements.txt
 sudo mv deCo2me /usr/bin/
 
 
@@ -45,3 +45,4 @@ StartupNotify=true
 
 #The permission on the unit file needs to be set to 644 :
 sudo chmod 644 /lib/systemd/system/deCo2me.service
+sudo apt install npm

@@ -276,7 +276,7 @@ def get_pc_name():
 
 
 
-def get_manufacturing_cost(manufacturing_data):
+def get_manufacturing_cost(manufacturing_data=None):
     """
     If the pc name isn't in the database we'll use the ADEME's value by default
     It is a very coarse approximation (that is even very low when compared to other values given by manufacturers for whatever reason)

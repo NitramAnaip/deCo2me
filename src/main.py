@@ -6,7 +6,7 @@ import os
 import subprocess
 
 #from pynput.keyboard import Key, Controller
-from data_gatherer import get_pc_name, fetch_rt_data_usage, fetch_battery_cons, folder_creation
+from data_gatherer import get_pc_name, fetch_rt_data_usage, fetch_battery_cons, folder_creation, get_manufacturing_cost
 
 product, manufacturer = get_pc_name()
 
@@ -21,7 +21,8 @@ if(not os.path.exists(json_folder)):
 global_json_path = json_folder + "global.json"
 global_json = {
     "computerManufacturer": manufacturer,
-    "computerModel": product
+    "computerModel": product,
+    "ComputerCost": get_manufacturing_cost()
 }
 
 with open (global_json_path, "w+") as f:
