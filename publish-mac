@@ -1,21 +1,31 @@
 #!/bin/bash
 dir=$(dirname $(readlink /proc/$$/fd/255))
 
-$dir/back/build-mac
-$dir/front/build-mac
 
-mkdir -p $dir/publish/mac
+sudo $PWD/back/build-mac
+sudo $PWD/front/build-mac
 
-cp -rf $dir/back/Measure/Measure.Unix/bin/Publish/Mac64/Measure.Unix $dir/publish/mac/
-cp -rf $dir/back/Measure/Measure.Unix/bin/Publish/Mac64/*.dylib $dir/publish/mac
+mkdir -p $PWD/publish/mac
+mkdir -p $PWD/publish/mac/deCo2me
+mkdir -p $PWD/publish/mac/deCo2me/back
+mkdir -p $PWD/publish/mac/deCo2me/front
+mkdir -p $PWD/publish/mac/deCo2me/front/data
 
-cp -rf $dir/back/Measure/Measure.Unix/bin/Publish/Mac64/*.exe $dir/publish/mac
-cp -rf $dir/back/Measure/Measure.Unix/bin/Publish/Mac64/*.dll $dir/publish/mac
 
-cp -rf $dir/src/* $dir/publish/mac
+cp -rf $PWD/back/Measure/Measure.Unix/bin/Publish/Mac64/Measure.Unix $PWD/publish/mac/deCo2me/
+cp -rf $PWD/back/Measure/Measure.Unix/bin/Publish/Mac64/*.dylib $PWD/publish/mac/deCo2me/
 
-cp -rf $dir/front/out/deco2me-darwin-x64/* $dir/publish/mac
+cp -rf $PWD/back/Measure/Measure.Unix/bin/Publish/Mac64/*.exe $PWD/publish/mac/deCo2me/
+cp -rf $PWD/back/Measure/Measure.Unix/bin/Publish/Mac64/*.dll $PWD/publish/mac/deCo2me/
 
-cp -rf $dir/setup/mac/* $dir/publish/mac
+cp -rf $PWD/src/* $PWD/publish/mac/deCo2me/back
 
-mv $dir/publish/mac/Measure.Unix $dir/publish/mac/Measure
+cp -rf $PWD/front/out/deco2me-darwin-x64/* $PWD/publish/mac/deCo2me/front
+
+cp -rf $PWD/setup/mac/installer.sh $PWD/publish/mac/deCo2me
+cp -rf $PWD/setup/mac/uninstaller.sh $PWD/publish/mac/deCo2me
+cp -rf $PWD/setup/mac/starter.sh $PWD/publish/mac/deCo2me/front
+
+
+
+mv $PWD/publish/mac/Measure.Unix $PWD/publish/mac/back

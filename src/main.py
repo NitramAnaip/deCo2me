@@ -13,7 +13,7 @@ product, manufacturer = get_pc_name()
 # Ensure the working directory is the script's directory
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-json_folder = "./../front/data/"
+json_folder = "./data/"
 
 if(not os.path.exists(json_folder)):
     os.makedirs(json_folder)

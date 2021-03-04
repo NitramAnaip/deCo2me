@@ -1,4 +1,4 @@
 #!/bin/bash
 dir=$(dirname $(readlink /proc/$$/fd/255))
 
-npm run publish-mac --prefix $dir
+npm run publish-mac --prefix $PWD/front/
