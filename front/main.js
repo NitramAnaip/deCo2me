@@ -6,6 +6,7 @@ function createWindow () {
     height: 800,
     autoHideMenuBar: true,
     webPreferences: {
+      enableRemoteModule: true,
       nodeIntegration: true
     }
   })
