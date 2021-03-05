@@ -117,7 +117,7 @@ function updatePowerGraph(data)
     for(let i = 0; i < newData[0].length; i++)
     {
       downPower.push((newData[1][i] * netWiredEnergy + newData[2][i] * netWirelessEnergy) * 1000 / (period / 3600)); //in W
-      upPower.push((newData[2][i] * netWiredEnergy + newData[3][i] * netWirelessEnergy) * 1000 / (period / 3600)); //in W
+      upPower.push((newData[3][i] * netWiredEnergy + newData[4][i] * netWirelessEnergy) * 1000 / (period / 3600)); //in W
     }
   }
 
