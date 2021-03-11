@@ -30,10 +30,10 @@
       "packagerConfig": {
         "icon": "icon.ico",
         "ignore": [
-          "^(\/data$)",
-          "^(\/build-)",
-          "^(\/README.md$)",
-          "^(\/testDataGen.js$)",
+          "^(/data$)",
+          "^(/build-)",
+          "^(/README.md$)",
+          "^(/testDataGen.js$)",
           ".gitignore"
         ]
       },

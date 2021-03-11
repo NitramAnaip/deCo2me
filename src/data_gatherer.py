@@ -54,6 +54,7 @@ energetic_mix = {"France": 80,"USA":350} #g of Co2 per Kwh
 
 
 def sub(command1, command2, command3='', command4='', command5=''):
+
     command = [command1, command2, command3, command4, command5]
     p = subprocess.Popen(command, stdout=subprocess.PIPE)
 
@@ -256,13 +257,21 @@ def get_pc_name():
         end_product = start_product + s[start_product:].find("by")
         product = s[start_product:end_product]
         product = product.replace("Product Name: ", "")
-
         start_manufacturer = s.find("Manufacturer: ")
         end_manufacturer = start_manufacturer + s[start_manufacturer:].find("\n")
         manufacturer = s[start_manufacturer:end_manufacturer]
         manufacturer = manufacturer.replace("Manufacturer: ", "")
-
         return product, manufacturer
+    
+    elif (platform.system() == 'Darwin'):
+        s = sub('system_profiler', 'SPHardwareDataType', '|', 'grep', '"Model Identifier"')
+        a = s.split("\n")
+        for i in range (len(a)):
+            if "Model Identifier:" in a[i]:
+                product = a[i]
+        product = product.replace("Model Identifier: ", "")
+        return product, "Apple"
+    
     elif(platform.system() == 'Windows'):
         s = sub('./Measure', 'model')
         a = s.split("\n")
