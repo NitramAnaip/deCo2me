@@ -15,7 +15,8 @@ if %errorLevel% == 0 (
     powershell -Command "Invoke-WebRequest https://www.python.org/ftp/python/3.9.2/python-3.9.2-amd64.exe -OutFile '%~dp0\python-setup.exe'"
 
     echo Installing Python...
-    start /W %~dp0\python-setup.exe /passive InstallAllUsers=1
+    start /W %~dp0\python-setup.exe /passive InstallAllUsers=1 PrependPath=1
+    del /Q %~dp0\python-setup.exe
 
     echo Installing %APPNAME%...
 
