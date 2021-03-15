@@ -1,5 +1,6 @@
 
 import time
+import platform
 import json
 from datetime import date
 import os
@@ -9,6 +10,8 @@ import subprocess
 from data_gatherer import get_pc_name, fetch_rt_data_usage, fetch_battery_cons, folder_creation, get_manufacturing_cost
 
 product, manufacturer = get_pc_name()
+
+print(platform.system())
 
 # Ensure the working directory is the script's directory
 os.chdir(os.path.dirname(os.path.realpath(__file__)))

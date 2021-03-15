@@ -12,11 +12,11 @@ mkdir -p $PWD/publish/mac/deCo2me/front
 mkdir -p $PWD/publish/mac/deCo2me/front/data
 
 
-cp -rf $PWD/back/Measure/Measure.Unix/bin/Publish/Mac64/Measure.Unix $PWD/publish/mac/deCo2me/
-cp -rf $PWD/back/Measure/Measure.Unix/bin/Publish/Mac64/*.dylib $PWD/publish/mac/deCo2me/
+sudo mv $PWD/back/Measure/Measure.Unix/bin/Publish/Mac64/Measure.Unix $PWD/publish/mac/deCo2me/back/Measure
+#cp -rf $PWD/back/Measure/Measure.Unix/bin/Publish/Mac64/*.dylib $PWD/publish/mac/deCo2me/
 
-cp -rf $PWD/back/Measure/Measure.Unix/bin/Publish/Mac64/*.exe $PWD/publish/mac/deCo2me/
-cp -rf $PWD/back/Measure/Measure.Unix/bin/Publish/Mac64/*.dll $PWD/publish/mac/deCo2me/
+#cp -rf $PWD/back/Measure/Measure.Unix/bin/Publish/Mac64/*.exe $PWD/publish/mac/deCo2me/
+cp -rf $PWD/back/Measure/Measure.Unix/bin/Publish/Mac64/* $PWD/publish/mac/deCo2me/back
 
 cp -rf $PWD/src/* $PWD/publish/mac/deCo2me/back
 
@@ -28,4 +28,4 @@ cp -rf $PWD/setup/mac/starter.sh $PWD/publish/mac/deCo2me/front
 
 
 
-mv $PWD/publish/mac/Measure.Unix $PWD/publish/mac/back
+
