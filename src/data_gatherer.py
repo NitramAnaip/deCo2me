@@ -289,9 +289,11 @@ def get_manufacturing_cost(manufacturing_data=None):
     If the pc name isn't in the database we'll use the ADEME's value by default
     It is a very coarse approximation (that is even very low when compared to other values given by manufacturers for whatever reason)
     https://www.bilans-ges.ademe.fr/documentation/UPLOAD_DOC_FR/index.htm?ordinateurs_et_equuipements_pe.htm
+
+    Will always be given in grams
     """
     pc_name = get_pc_name()
-    cost = 169 # default value given by ADEME
+    cost = 169000 # default value given by ADEME
     return cost
 
 

@@ -24,7 +24,7 @@ function initInterface()
 
   createLineGraph("power-graph", true, 2000, ["Electrical (W)", "Download (W)", "Upload (W)"], updatePowerGraph, ["#ebbf31", "#28de23", "#8f24b3"]);
   createBarGraph("co2-graph", true, 2000, ["Electrical (g)", "Download (g)", "Upload (g)"], updateCo2Graph, ["#ebbf31", "#28de23", "#8f24b3"]);
-  createDoughnutGraph("source-graph", true, ["Electrical power", "Download", "Upload"], updateSourceGraph, ["#edce2f", "#2fb555", "#2f97ed"], "#666666");
+  createDoughnutGraph("source-graph", true, ["Electrical power", "Download", "Upload", "Manufacturing"], updateSourceGraph, ["#edce2f", "#2fb555", "#2f97ed", "#efefef"], "#666666");
   
   createLineGraph("electrical-power-graph", false, 2000, ["Power (W)"], updateElectricalPowerGraph, [], "#1F2D3D");
   createBarGraph("energy-graph", true, 2000, ["Energy (Wh)"], updateEnergyGraph, ["#3471e3"]);
@@ -86,6 +86,7 @@ function initStaticComponents()
       {
         let global = JSON.parse(data);
         computerInfo = `${global.computerManufacturer} ${global.computerModel}`;
+        Manufacturing = `${global.ManufacturingCost}`/ `${global.ComputerAge}`;
       }
       catch(error)
       {
@@ -117,7 +118,7 @@ function updatePowerGraph(data)
     for(let i = 0; i < newData[0].length; i++)
     {
       downPower.push((newData[1][i] * netWiredEnergy + newData[2][i] * netWirelessEnergy) * 1000 / (period / 3600)); //in W
-      upPower.push((newData[3][i] * netWiredEnergy + newData[4][i] * netWirelessEnergy) * 1000 / (period / 3600)); //in W
+      upPower.push((newData[2][i] * netWiredEnergy + newData[3][i] * netWirelessEnergy) * 1000 / (period / 3600)); //in W
     }
   }
 
@@ -161,7 +162,7 @@ function updateSourceGraph(data)
     let lastTime = null;
     let lastValue = null;
 
-    gData = [0, 0, 0];
+    gData = [0, 0, 0, 0];
   
     for(let i = 0; i < dayData.power.length; i++)
     {
@@ -175,6 +176,8 @@ function updateSourceGraph(data)
     
     }
   }
+
+  gData[3] = Manufacturing
 
   data.datasets[0].data = gData;
 }
@@ -243,7 +246,7 @@ function updateNetworkGraph(data)
 
     for(let i = 0; i < newData[0].length; i++)
     {
-      down.push((newData[1][i] + newData[2][i]) / 1000 / period); //in kB/s
+      down.push((newData[0][i] + newData[1][i]) / 1000 / period); //in kB/s
       up.push((newData[2][i] + newData[3][i]) / 1000 / period); //in kB/s
     }
   }
@@ -267,7 +270,7 @@ function updateDataGraph(data)
 
     for(let i = 0; i < newData[0].length; i++)
     {
-      down.push((newData[1][i] + newData[2][i]) / 1000000); //in MB
+      down.push((newData[0][i] + newData[1][i]) / 1000000); //in MB
       up.push((newData[2][i] + newData[3][i]) / 1000000); //in MB
     }
   }

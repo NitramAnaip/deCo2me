@@ -25,7 +25,8 @@ global_json_path = json_folder + "global.json"
 global_json = {
     "computerManufacturer": manufacturer,
     "computerModel": product,
-    "ComputerCost": get_manufacturing_cost()
+    "ManufacturingCost": get_manufacturing_cost()
+    "ComputerAge"
 }
 
 with open (global_json_path, "w+") as f:
